@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+////////////////////////////////////////////
+//  VOYAGER FRAMEWORK
+//  ----------------------------------------
+//  http://github.com/jameslevi/voyager
+////////////////////////////////////////////
+//  Version: 1.0.2
+//  Author: James Crisostomo
+//  Email: nerdlabenterprise@gmail.com
+////////////////////////////////////////////
+
+// Include composer autoload mechanism to
+// import third party modules and libraries.
+
+if(file_exists('vendor/autoload.php'))
+{
+    require 'vendor/autoload.php';
+}
+
+// Initiate console application.
+
+Voyager\Console\Command::init($argv);

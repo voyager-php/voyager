@@ -1,0 +1,19 @@
+{
+    "name": "jameslevi/voyager",
+    "type": "project",
+    "description": "Is a fast, lightweight, feature-rich and open-source web application framework that provides foundation to kick-start your development.",
+    "keywords": [
+        "framework",
+        "voyager"
+    ],
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Voyager\\": "system/",
+            "App\\": "app/",
+            "Components\\": "resource/view/components/",
+            "Monsoon\\": "system/Resource/Monsoon/"
+        }
+    }
+}

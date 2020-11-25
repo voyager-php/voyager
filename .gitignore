@@ -1,0 +1,5 @@
+storage/*
+vendor/*
+public/css/static/*
+public/js/static/*
+.env
