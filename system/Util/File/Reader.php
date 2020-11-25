@@ -263,7 +263,7 @@ class Reader
 
             while(!feof($fn))
             {
-                $this->lines->push(Str::moveFromEnd(fgets($fn), PHP_EOL));
+                $this->lines->push(Str::moveFromEnd(trim(fgets($fn)), PHP_EOL));
             }
         }
 

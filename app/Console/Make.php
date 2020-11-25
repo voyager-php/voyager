@@ -28,9 +28,16 @@ class Make extends Console
         if(!$file->exist())
         {
             $example = new Reader('.env.example');
-            $file->make($example->content());
-        
-            $msg->success('DotEnv file was successfully created.');
+
+            if($example->exist())
+            {
+                $file->make($example->content());
+                $msg->success('DotEnv file was successfully created.');
+            }
+            else
+            {
+                $msg->error('Your .env.example file was missing.');
+            }
         }
         else
         {

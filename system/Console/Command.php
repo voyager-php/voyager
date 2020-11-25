@@ -111,7 +111,6 @@ class Command
                 exec('php atmos cache:clear', $output);
                 exec('php atmos make:env .env', $output);
                 exec('php atmos key:generate', $output);
-                exec('php atmos project:debug', $output);
                 exec('php atmos up', $output);
 
                 foreach($output as $item)
