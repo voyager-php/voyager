@@ -55,10 +55,7 @@ class Make extends Console
 
     private function manageFolder(string $path, string $name)
     {
-        if(!Str::endWith($path, '/'))
-        {
-            $path .= '/';
-        }
+        $path = Str::moveFromEnd($path, '/');
 
         $name = ucfirst($name);
         $msg = new Message();
