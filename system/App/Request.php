@@ -2,6 +2,8 @@
 
 namespace Voyager\App;
 
+use Voyager\Http\File\DownloadManager;
+use Voyager\Http\File\UploadManager;
 use Voyager\Http\Request as Data;
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
@@ -156,6 +158,32 @@ class Request
             'meta'                  => $meta,
             'data'                  => $data,
         ]);
+    }
+
+    /**
+     * Download specific file to browser.
+     * 
+     * @param   string $filename
+     * @return  $this
+     */
+
+    public function download(string $filename)
+    {
+        $manager = new DownloadManager($filename, $this);
+        
+        return $manager->exec();
+    }
+
+    /**
+     * Upload file in to the server.
+     * 
+     * @param   string $key
+     * @return  \Voyager\Http\File\UploadManager
+     */
+
+    public function upload(string $key)
+    {
+        return new UploadManager($key, $this);
     }
 
 }
