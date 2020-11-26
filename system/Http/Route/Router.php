@@ -181,12 +181,20 @@ class Router
             }
         }
 
-        foreach($matched->get() as $item)
+        if(!$matched->empty())
         {
-            if(in_array($method, $item['verb']))
+            foreach($matched->get() as $item)
             {
-                $this->route = $item;
-                return false;
+                if(in_array($method, $item['verb']))
+                {
+                    $this->route = $item;
+                    return false;
+                }
+            }
+
+            if($matched->length() === 1)
+            {
+                $this->route = $matched->get(0);
             }
         }
     }
