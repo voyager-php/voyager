@@ -4,6 +4,7 @@ namespace Voyager\App;
 
 use Voyager\Http\Request as Data;
 use Voyager\Util\Arr;
+use Voyager\Util\Data\Collection;
 
 class Request
 {
@@ -127,7 +128,7 @@ class Request
     }
 
     /**
-     * Return request data.
+     * Return resource data.
      * 
      * @param   string $name
      * @return  mixed
@@ -136,6 +137,25 @@ class Request
     public function __get(string $name)
     {
         return $this->resource->get($name);
+    }
+
+    /**
+     * Return formatted response for API.
+     * 
+     * @param   mixed $data
+     * @param   array $meta
+     * @return  \Voyager\Util\Data\Collection
+     */
+
+    public function response($data = null, array $meta = [])
+    {
+        return new Collection([
+            'code'                  => app()->code,
+            'status'                => app()->success && app()->locale === 'en' ? 'OK' : lang('status.code.' . app()->code . '@statuscode'),
+            'success'               => app()->success,
+            'meta'                  => $meta,
+            'data'                  => $data,
+        ]);
     }
 
 }

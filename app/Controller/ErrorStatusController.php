@@ -21,7 +21,7 @@ class ErrorStatusController extends Controller
 
         if($request->route('ajax') || $request->ajax())
         {
-            return json();
+            return $request->response();
         }
         else
         {

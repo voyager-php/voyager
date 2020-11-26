@@ -2,6 +2,8 @@
 
 namespace Voyager\Database;
 
+use Voyager\App\Request;
+use Voyager\Util\Arr;
 use Voyager\Util\Data\Bundle;
 
 class DBResult extends DBResponse
@@ -127,7 +129,9 @@ class DBResult extends DBResponse
 
     public function transform(string $class)
     {
-        return $this->fetch()->transform($class);
+        $this->bundle = $this->fetch()->transform($class);
+    
+        return $this;
     }
 
     /**
@@ -149,6 +153,42 @@ class DBResult extends DBResponse
                 return $data->{$name};
             }
         }
+    }
+
+    /**
+     * Paginate the results from database.
+     * 
+     * @param   \Voyager\App\Request $request
+     * @return  \Voyager\Util\Data\Collection
+     */
+
+    public function paginate(Request $request)
+    {
+        $data = $this->fetch();
+        $total = $this->numRows();
+        $page = (int)$request->get('page', 1);
+        $per_page = (int)$request->get('per_page', 10);
+        $total_page = (int)ceil($total / ($page * $per_page));
+        $start = ($page * $per_page) - $per_page;
+        $end = $start + $per_page;
+        $result = new Arr();
+
+        for($i = $start + 1; $i <= $end; $i++)
+        {
+            if($i <= $total)
+            {
+                $result->push($data->get($i - 1)->toArray());
+            }
+        }
+
+        return $request->response($result->get(), [
+            'total'             => $total,
+            'paginate'          => true,
+            'page'              => $page,
+            'per_page'          => $per_page,
+            'total_page'        => $total_page,
+            'rows'              => $result->length(),
+        ]);
     }
 
 }
