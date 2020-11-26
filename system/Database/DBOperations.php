@@ -104,7 +104,7 @@ abstract class DBOperations
 
     public function sql()
     {
-        return $this->sql;
+        return trim($this->sql);
     }
 
     /**

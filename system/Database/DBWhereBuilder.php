@@ -74,9 +74,9 @@ abstract class DBWhereBuilder extends DBOperations
             {
                 $sql->append($key . " ")
                     ->append($operand)
-                    ->append(" '")
+                    ->append(" ")
                     ->append(DB::escape($item))
-                    ->append("' OR ");
+                    ->append(" OR ");
             }
 
             if($sql->endWith(' OR '))
@@ -91,9 +91,9 @@ abstract class DBWhereBuilder extends DBOperations
             $sql = new Builder($glue);
             $sql->append(" (" . $key . " ")
                 ->append($operand)
-                ->append(" '")
+                ->append(" ")
                 ->append(DB::escape($value))
-                ->append("')");
+                ->append(")");
         }
 
         return $sql->get();
