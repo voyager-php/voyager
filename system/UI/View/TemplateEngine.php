@@ -35,6 +35,14 @@ class TemplateEngine
     private static $path = 'resource/view/';
 
     /**
+     * Store hashed filename for resources.
+     * 
+     * @var string
+     */
+
+    private static $hash;
+
+    /**
      * Content resource string.
      * 
      * @var string
@@ -91,6 +99,10 @@ class TemplateEngine
 
     public function __construct(string $content, array $emit = [])
     {
+        $this->uri = Request::uri();
+        $this->content = $content;
+        $this->emit = new Arr($emit);
+
         if(is_null(static::$script))
         {
             static::$script = new Arr();
@@ -101,10 +113,11 @@ class TemplateEngine
             static::$styles = new Arr();
         }
 
-        $this->uri = Request::uri();
-        $this->content = $content;
-        $this->emit = new Arr($emit);
-        
+        if(is_null(static::$hash))
+        {
+            static::$hash = Str::hash(app()->success ? $this->uri : app()->code);
+        }
+
         $cache = new Reader(static::cachePath(Str::hash($this->uri)));
         
         if(app()->success && $cache->exist())
@@ -131,14 +144,17 @@ class TemplateEngine
                 $html = new Parser($this->extendLayout($this->loadContent()));
                 $html = static::compile($html->get(), $this->emit);
 
-                if(Str::has($html, '<v-') || Str::has($html, '</v-'))
+                if(Str::has($html, '<v-') && Str::has($html, '</v-'))
                 {
                     $html = Renderer::start($html);
                 }
 
-                if(Config::get('enable') && !app()->cache)
+                if(Config::get('enable'))
                 {
-                    $html = CSSUtility::extract($html);
+                    if((!File::exist('public/css/static/' . static::$hash . '.css') && app()->cache) || !app()->cache)
+                    {
+                        $html = CSSUtility::extract($html);
+                    }
                 }
 
                 $this->output = $this->makeExternalResource($html);
@@ -206,7 +222,7 @@ class TemplateEngine
 
     private function makeExternalResource(string $html)
     {
-        $hash = Str::hash(app()->success ? $this->uri : app()->code);
+        $hash = static::$hash;
         
         if(Str::has($html, '</head>'))
         {
@@ -231,29 +247,16 @@ class TemplateEngine
                         ->makeFolder('static');
                 }
 
-                if(!app()->cache)
+                if(!app()->cache || (app()->cache && $exist))
                 {
                     File::delete($path . $hash . $ext);
                 }
 
                 $source = static::$styles->reverse()->join();
-
+                
                 if(env('APP_COMPRESS'))
                 {
-                    $source = new Builder($source);
-                    $source->replace(PHP_EOL, '')
-                           ->replace('   ', ' ')
-                           ->replace('  ', ' ')
-                           ->replace(' {', '{')
-                           ->replace('{ ', '{')
-                           ->replace('} ', '}')
-                           ->replace(' }', '}')
-                           ->replace('  ', '')
-                           ->replace(': ', ':')
-                           ->replace(', ', ',')
-                           ->replace('; ', ';');
-
-                    $source = $source->get();
+                    $source = preg_replace( "/\r|\n/", "", $source);
                 }
 
                 Dir::make($path, $hash . $ext, $source);
@@ -291,7 +294,7 @@ class TemplateEngine
                         ->makeFolder('static');
                 }
 
-                if(!app()->cache)
+                if(!app()->cache || (app()->cache && $exist))
                 {
                     File::delete($path . $hash . $ext);
                 }
