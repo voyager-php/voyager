@@ -269,102 +269,6 @@
     }
 
     /**
-     * JSON DATA 
-     * ----------------------------------
-     * Return json string from array or
-     * data collection.
-     */
-
-    if(!function_exists('json'))
-    {
-        function json($data = [], bool $paginate = false)
-        {
-            $meta = [];
-            $is_collection = false;
-            $code = app()->code;
-            $message = $code === 200 && app()->locale === 'en' ? 'OK' : lang('status.code.' . $code . '@statuscode');
-            
-            if($data instanceof Collection)
-            {
-                $is_collection = true;
-                app()->contentType = 'application/json';
-                $array = $data->toArray();
-            }
-            else if($data instanceof Bundle || $data instanceof DBResult)
-            {
-                app()->contentType = 'application/json';
-                $array = $data->toArray();
-            }
-            else if($data instanceof Response)
-            {
-                app()->contentType = 'application/json';
-                $array = $data->output();
-            }
-            else if(is_array($data))
-            {
-                app()->contentType = 'application/json';
-                $array = $data;
-            }
-            else
-            {
-                return $data;
-            }
-
-            // Set meta informations.
-
-            if(!empty($array) && !$is_collection && !$is_collection && count(array_filter(array_keys($array), 'is_string')) === 0)
-            {
-                $total = sizeof($array);
-
-                $meta['total']      = $total;
-                $meta['paginate']   = $paginate;
-
-                // Add some pagination properties and limit
-                // the result by how many rows per page.
-
-                if($paginate)
-                {
-                    $page = (int)Request::get('page', 1);
-                    $per_page = (int)Request::get('per_page', 10);
-                    $total_page = ceil($total / ($page * $per_page));
-
-                    $rows = [];
-
-                    $start = ($page * $per_page) - $per_page;
-                    $end = $start + $per_page;
-                    $num = 0;
-
-                    for($i = $start + 1; $i <= $end; $i++)
-                    {
-                        if($i <= $total)
-                        {
-                            $num++;
-                            $rows[] = $array[$i - 1];
-                        }
-                    }
-
-                    $array = $rows;
-
-                    $meta['page']  = $page;
-                    $meta['per_page'] = $per_page;
-                    $meta['total_page'] = $total_page;
-                    $meta['rows'] = $num;
-                }
-            }
-
-            // Return json formatted response.
-
-            return json_encode([
-                'code'       => $code,
-                'success'    => $code === 200,
-                'status'     => $message,
-                'meta'       => $meta,
-                'data'       => $array,
-            ]);
-        }
-    }
-
-    /**
      * Abort request and respond with an error.
      * 
      * @param   int $code
@@ -382,7 +286,7 @@
             if(is_null($data))
             {
                 $instance = new App\Controller\ErrorStatusController(new Collection(['method' => 'index']));
-                app()->response = $instance->getResponse();   
+                app()->response = $instance->getResponse();
             }
             else
             {
