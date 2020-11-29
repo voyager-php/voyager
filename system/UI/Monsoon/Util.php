@@ -4,7 +4,6 @@ namespace Voyager\UI\Monsoon;
 
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
-use Voyager\Util\Str as Builder;
 
 class Util
 {
@@ -15,14 +14,6 @@ class Util
      */
 
     private static $utilities;
-
-    /**
-     * Store configurations.
-     * 
-     * @var \Voyager\Util\Data\Collection
-     */
-
-    private $config;
 
     /**
      * CSS utility name.
@@ -54,7 +45,7 @@ class Util
      * @var \Voyager\Util\Arr
      */
 
-    private $color;
+    private $colors;
 
     /**
      * Store units for css values.
@@ -94,7 +85,6 @@ class Util
         $this->instead = new Arr();
         $this->colors = new Arr();
         $this->important = new Arr();
-        $this->config = new Collection(Config::get()['default']);
         static::$utilities->push($this);
     }
 
@@ -181,96 +171,21 @@ class Util
     }
 
     /**
-     * Generate css class utilities.
+     * Return css utility data.
      * 
-     * @param   string $val
-     * @return  string
+     * @return  \Voyager\Util\Data\Collection
      */
 
-    public function generate(string $val = null)
+    public function data()
     {
-        $str = new Builder('{');
-        
-        foreach($this->props->get() as $key => $value)
-        {
-            $str->append($key . ':' . $value);
-
-            if($this->important->has($key))
-            {
-                $str->append(' !important');
-            }
-            
-            $str->append(';');
-        }
-
-        foreach($this->default->get() as $key => $value)
-        {
-            $config = new Arr($this->config->{$value} ?? []);
-            
-            if(is_null($val) && $this->instead->hasKey($key))
-            {
-                $str->append($key . ':' . $this->instead->get($key));
-            }
-            else if($config->hasKey($val))
-            {
-                $str->append($key . ':' . $config->get($val));
-            }
-            else
-            {
-                if(is_null($val) && $this->instead->hasKey($key))
-                {
-                    $str->append($key . ':' . $this->instead->get($key));
-                }   
-                else
-                {
-                    $str->append($key . ':' . $val . ($this->units->hasKey($key) ? $this->units->get($key) : ''));
-                }
-            }
-
-            if($this->important->has($key))
-            {
-                $str->append(' !important');
-            }
-
-            $str->append(';');
-        }
-
-        foreach($this->colors->get() as $key => $value)
-        {
-            $config = new Arr($this->config->colors ?? []);
-            
-            if($config->hasKey($value))
-            {
-                $color = $config->get($value);
-                
-                if(is_string($color))
-                {
-                    $str->append($key . ':' . $color);
-                }
-                else if(is_array($color))
-                {
-                    if(array_key_exists($val, $color))
-                    {
-                        $str->append($key . ':' . $color[$val]);
-                    }
-                }
-            }
-            else
-            {
-                $str->append($key . ':' . $val);
-            }
-
-            if($this->important->has($key))
-            {
-                $str->append(' !important');
-            }
-
-            $str->append(';');
-        }
-
-        $str->append('}');
-
-        return $str->get();
+        return new Collection([
+            'props'                 => $this->props->get(),
+            'default'               => $this->default->get(),
+            'units'                 => $this->units->get(),
+            'instead'               => $this->instead->get(),
+            'colors'                => $this->colors->get(),
+            'important'             => $this->important->get(),
+        ]);
     }
 
     /**

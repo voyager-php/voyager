@@ -6,6 +6,7 @@ use Voyager\Facade\Cache;
 use Voyager\Facade\Str;
 use Voyager\UI\View\TemplateEngine;
 use Voyager\Util\Arr;
+use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Reader;
 use Voyager\Util\Str as Builder;
 
@@ -26,6 +27,14 @@ class CSSUtility
      */
 
     private static $classes;
+
+    /**
+     * Location of css utility.
+     * 
+     * @var string
+     */
+
+    private static $utility_path = 'system/UI/Monsoon/utilities.php';
 
     /**
      * Supported pseudo classes.
@@ -207,10 +216,18 @@ class CSSUtility
      * @return  string
      */
 
-    private static function generate(string $util, string $classname, string $pseudo = null, bool $negative = false, $value = null)
+    private static function generate(string $util, string $classname, string $pseudo = null, bool $negative = false, $val = null)
     {
         if(static::$classes->hasKey($classname))
         {
+            $data = new Collection(static::$classes->get($classname));
+            $props = new Arr($data->props);
+            $default = new Arr($data->default);
+            $units = new Arr($data->units);
+            $instead = new Arr($data->instead);
+            $colors = new Arr($data->colors);
+            $important = new Arr($data->important);
+            $configuration = new Collection(static::$config['default']);
             $str = new Builder('.' . $util);
             
             if(!is_null($pseudo))
@@ -218,7 +235,86 @@ class CSSUtility
                 $str->append(':' . $pseudo);
             }
 
-            $str->append(static::$classes->get($classname)->generate($value));
+            $str->append('{');
+
+            foreach($props->get() as $key => $value)
+            {
+                $str->append($key . ':' . $value);
+        
+                if($important->has($key))
+                {
+                    $str->append(' !important');
+                }
+                    
+                $str->append(';');
+            }
+
+            foreach($default->get() as $key => $value)
+            {
+                $config = new Arr($configuration->{$value} ?? []);
+            
+                if(is_null($val) && $instead->hasKey($key))
+                {
+                    $str->append($key . ':' . $instead->get($key));
+                }
+                else if($config->hasKey($val))
+                {
+                    $str->append($key . ':' . $config->get($val));
+                }
+                else
+                {
+                    if(is_null($val) && $instead->hasKey($key))
+                    {
+                        $str->append($key . ':' . $instead->get($key));
+                    }   
+                    else
+                    {
+                        $str->append($key . ':' . $val . ($units->hasKey($key) ? $units->get($key) : ''));
+                    }
+                }
+
+                if($important->has($key))
+                {
+                    $str->append(' !important');
+                }
+
+                $str->append(';');
+            }
+
+            foreach($colors->get() as $key => $value)
+            {
+                $config = new Arr($configuration->colors ?? []);
+            
+                if($config->hasKey($value))
+                {
+                    $color = $config->get($value);
+                
+                    if(is_string($color))
+                    {
+                        $str->append($key . ':' . $color);
+                    }
+                    else if(is_array($color))
+                    {
+                        if(array_key_exists($val, $color))
+                        {
+                            $str->append($key . ':' . $color[$val]);
+                        }
+                    }
+                }
+                else
+                {
+                    $str->append($key . ':' . $val);
+                }
+
+                if($important->has($key))
+                {
+                    $str->append(' !important');
+                }
+
+                $str->append(';');
+            }
+
+            $str->append('}');
 
             return $str->get();
         }
@@ -232,11 +328,11 @@ class CSSUtility
 
     private static function load()
     {
-         $cache = Cache::get('css-utilities');
+        $cache = Cache::get('css-utilities');
 
         if(is_null($cache))
         {
-            $file = new Reader('system/UI/Monsoon/utilities.php');
+            $file = new Reader(static::$utility_path);
             
             if($file->exist())
             {
@@ -244,13 +340,15 @@ class CSSUtility
 
                 foreach(Util::get()->get() as $item)
                 {
-                    static::$classes->set($item->getName(), $item);
+                    static::$classes->set($item->getName(), $item->data()->toArray());
                 }
             }
+
+            Cache::store('css-utilities', static::$classes->get());
         }
         else
         {
-            return $cache;
+            static::$classes = new Arr($cache);
         }
     }
 

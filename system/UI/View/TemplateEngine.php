@@ -151,10 +151,7 @@ class TemplateEngine
 
                 if(Config::get('enable'))
                 {
-                    if((!File::exist('public/css/static/' . static::$hash . '.css') && app()->cache) || !app()->cache)
-                    {
-                        $html = CSSUtility::extract($html);
-                    }
+                    $html = CSSUtility::extract($html);
                 }
 
                 $this->output = $this->makeExternalResource($html);
