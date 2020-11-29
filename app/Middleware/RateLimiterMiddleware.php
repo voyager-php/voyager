@@ -33,6 +33,7 @@ class RateLimiterMiddleware extends Middleware
             $arr->push($timestamp);
         }
 
+        $arr->push(time());
         $session->set($uri, $arr->get());
 
         $arr->truncate();
