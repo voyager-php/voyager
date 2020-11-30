@@ -79,6 +79,48 @@
     }
 
     /**
+     * Return app name declared from the .env file.
+     * 
+     * @return  string
+     */
+
+    if(!function_exists('app_name'))
+    {
+        function app_name()
+        {
+            return env('INFO_NAME');
+        }
+    }
+
+    /**
+     * Return app description from the .env file.
+     * 
+     * @return  string
+     */
+
+    if(!function_exists('app_description'))
+    {
+        function app_description()
+        {
+            return env('INFO_DESCRIPTION');
+        }
+    }
+
+    /**
+     * Return app version from the .env file.
+     * 
+     * @return  string
+     */
+
+    if(!function_exists('app_version'))
+    {
+        function app_version()
+        {
+            return env('INFO_VERSION');
+        }
+    }
+
+    /**
      * Return generated csrf token.
      * 
      * @return  string
