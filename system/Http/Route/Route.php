@@ -238,7 +238,7 @@ class Route extends RouteBase
 
     public static function all()
     {
-        return static::$routes->get();
+        return !static::empty() ? static::$routes->get() : [];
     }
 
     /**
@@ -249,7 +249,7 @@ class Route extends RouteBase
 
     public static function empty()
     {
-        return static::$routes->empty();
+        return !is_null(static::$routes) ? static::$routes->empty() : true;
     }
 
     /**
@@ -260,7 +260,10 @@ class Route extends RouteBase
 
     public static function clear()
     {
-        static::$routes->truncate();
+        if(!static::empty())
+        {
+            static::$routes->truncate();
+        }
     }
 
 }
