@@ -228,15 +228,15 @@ class TemplateEngine
             $break = Str::break($html, '</head>');
             $exist = File::exist($path . $hash . $ext);
 
-            $app_css = new Reader('resource/css/app.css');
-
-            if($app_css->exist())
+            if(!$exist || !app()->cache)
             {
-                static::addStylesheet('app', $app_css->content());
-            }
+                $app_css = new Reader('resource/css/app.css');
+                
+                if($app_css->exist())
+                {
+                    static::addStylesheet('app_css', $app_css->content());
+                }
 
-            if(!(app()->cache && $exist) && !static::$styles->empty())
-            {
                 if(!Dir::exist('public/css/'))
                 {
                     $dir = new Directory('public/');
@@ -244,11 +244,8 @@ class TemplateEngine
                         ->makeFolder('static');
                 }
 
-                if(!app()->cache || (app()->cache && $exist))
-                {
-                    File::delete($path . $hash . $ext);
-                }
-
+                File::delete($path . $hash . $ext);
+                
                 $source = static::$styles->reverse()->join();
                 
                 if(env('APP_COMPRESS'))
@@ -273,17 +270,17 @@ class TemplateEngine
             $break = Str::break($html, '</body>');
             $exist = File::exist($path . $hash . $ext);
 
-            ScriptResourceProvider::init();
-
-            $app_js = new Reader('resource/js/app.js');
-
-            if($app_js->exist())
+            if(!$exist || !app()->cache)
             {
-                static::addScript('app', $app_js->content());
-            }
+                ScriptResourceProvider::init();
+            
+                $app_js = new Reader('resource/js/app.js');
 
-            if(!(app()->cache && $exist) && !static::$script->empty())
-            {
+                if($app_js->exist())
+                {
+                    static::addScript('app_js', $app_js->content());
+                }
+
                 if(!Dir::exist('public/js/'))
                 {
                     $dir = new Directory('public/');
@@ -291,10 +288,7 @@ class TemplateEngine
                         ->makeFolder('static');
                 }
 
-                if(!app()->cache || (app()->cache && $exist))
-                {
-                    File::delete($path . $hash . $ext);
-                }
+                File::delete($path . $hash . $ext);
 
                 $source = static::$script->reverse()->join();
 
