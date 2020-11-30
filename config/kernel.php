@@ -49,6 +49,7 @@ return [
         'csrf'              => \App\Middleware\CSRFTokenMiddleware::class,
         'validation'        => \App\Middleware\ValidationMiddleware::class,
         'expire'            => \App\Middleware\RouteExpirationMiddleware::class,
+        'commence'          => \App\Middleware\CommenceAccessMiddleware::class,
     ],
 
 ];

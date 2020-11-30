@@ -326,7 +326,7 @@ class Chronos
 
     public function getAge()
     {
-        return (int) $this->datetime->diff(new DateTime())->y;
+        return (int) $this->datetime->diff(new DateTime('now', $this->getDateTimeZoneObject()))->y;
     }
 
     /**
@@ -337,7 +337,7 @@ class Chronos
 
     public function hasPassed()
     {
-        return new DateTime() > $this->datetime;
+        return new DateTime('now', $this->getDateTimeZoneObject()) > $this->datetime;
     }
 
     /**
@@ -348,7 +348,7 @@ class Chronos
 
     public function isFuture()
     {
-        return new DateTime() < $this->datetime;
+        return new DateTime('now', $this->getDateTimeZoneObject()) < $this->datetime;
     }
 
     /**

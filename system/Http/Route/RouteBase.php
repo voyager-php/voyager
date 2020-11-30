@@ -51,6 +51,7 @@ abstract class RouteBase
             'cache'                 => null,
             'redirect'              => null,
             'expiration'            => null,
+            'commence'              => null,
             'validation'            => null,
             'permission'            => [],
             'limit'                 => 60,
@@ -241,6 +242,19 @@ abstract class RouteBase
     public function redirect(string $uri)
     {
         return $this->set('redirect', $uri);
+    }
+
+    /**
+     * Set commence access date and time.
+     * 
+     * @param   string $datetime
+     * @return  $this
+     */
+
+    public function commence(string $datetime)
+    {
+        $this->middlewares->push('commence');
+        return $this->set('commence', $datetime);
     }
 
     /**
