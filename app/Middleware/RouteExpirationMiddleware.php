@@ -4,6 +4,7 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
+use Voyager\Util\Chronos;
 
 class RouteExpirationMiddleware extends Middleware
 {
@@ -16,7 +17,7 @@ class RouteExpirationMiddleware extends Middleware
     
     protected function handle(Request $request)
     {
-        if(time() > strtotime($request->route('expiration')))
+        if(Chronos::parse($request->route('expiration'))->hasPassed())
         {
             abort(410);
         }
