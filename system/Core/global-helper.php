@@ -1,15 +1,12 @@
 <?php
 
     use Voyager\Core\Application;
-    use Voyager\Core\Response;
-    use Voyager\Database\DBResult;
     use Voyager\Facade\Auth;
     use Voyager\Facade\Cache;
     use Voyager\Facade\Request;
     use Voyager\Facade\Str;
     use Voyager\Resource\Locale\Lang;
     use Voyager\UI\View\TemplateEngine;
-    use Voyager\Util\Data\Bundle;
     use Voyager\Util\Data\Collection;
     use Voyager\Util\Http\Session;
     use Voyager\Util\Str as Builder;
@@ -100,7 +97,7 @@
     }
 
     /**
-     * Return if user has permission.
+     * Return true if user has permission.
      * 
      * @param   string $key
      * @return  bool
@@ -111,6 +108,62 @@
         function permission(string $key)
         {
             return Auth::hasPermission($key);
+        }
+    }
+
+    /**
+     * Return true if current session is superadmin.
+     * 
+     * @return  bool
+     */
+
+    if(!function_exists('is_superadmin'))
+    {
+        function is_superadmin()
+        {
+            return Auth::type() === 0;
+        }
+    }
+
+    /**
+     * Return true if current session is admin.
+     * 
+     * @return  bool
+     */
+
+    if(!function_exists('is_admin'))
+    {
+        function is_admin()
+        {
+            return Auth::type() === 1;
+        }
+    }
+
+    /**
+     * Return true if current session is member.
+     * 
+     * @return  bool
+     */
+
+    if(!function_exists('is_member'))
+    {
+        function is_member()
+        {
+            return Auth::type() === 2;
+        }
+    }
+
+    /**
+     * Return true if current session is just a guest.
+     * 
+     * @return  bool
+     */
+
+    if(!function_exists('is_guest'))
+    {
+        function is_guest()
+        {
+            return Auth::type() === 3;
         }
     }
 

@@ -230,7 +230,7 @@ class Authentication
 
     public function type()
     {
-        return $this->get('user_type');
+        return $this->get('user_type') ?? 3;
     }
 
     /** 
