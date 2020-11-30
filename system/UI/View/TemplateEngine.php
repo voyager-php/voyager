@@ -313,6 +313,8 @@ class TemplateEngine
 
                 $builder->append('authenticated: ' . (Auth::authenticated() ? 'true' : 'false') . ',');
                 $builder->append('authID: "' . Auth::id() . '",');
+                $builder->append('authType: ' . Auth::type() . ',');
+                $builder->append('authUserId: "' . Auth::userId() . '",');
 
                 $builder->append('get: function(){return JSON.parse("')
                         ->append(addslashes(Request::get()->toJson()))

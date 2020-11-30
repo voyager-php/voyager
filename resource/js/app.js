@@ -77,6 +77,8 @@
     };
 
     defineProperty('authID', app.authID);
+    defineProperty('authType', app.authType);
+    defineProperty('authUserId', app.authUserId);
     defineProperty('token', app.token);
 
     voyager.get = function(key) 
