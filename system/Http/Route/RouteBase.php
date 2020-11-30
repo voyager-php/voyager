@@ -55,6 +55,7 @@ abstract class RouteBase
             'commence'              => null,
             'validation'            => null,
             'permission'            => [],
+            'location'              => [],
             'limit'                 => 60,
             'period'                => 60,
         ]);
@@ -349,14 +350,14 @@ abstract class RouteBase
     public function permission(string $user_type)
     {
         $config = AuthConfig::get('users');
-        $pool = new Arr($this->data->get('permission'));
+        $pool = $this->data->get('permission');
 
         if(array_key_exists($user_type, $config))
         {
-            $pool->push($config[$user_type]);
+            $pool[] = $config[$user_type];
         }
 
-        return $this->set('permission', $pool->get());
+        return $this->set('permission', $pool);
     }
 
     /**
@@ -401,6 +402,25 @@ abstract class RouteBase
     public function guest()
     {
         return $this->permission('guest');
+    }
+
+    /**
+     * Block access from countries.
+     * 
+     * @param   mixed $countries
+     * @return  $this
+     */
+
+    public function blockCountries($countries)
+    {
+        $this->middlewares->push('location');
+
+        if(is_string($countries))
+        {
+            $countries = [$countries];
+        }
+
+        return $this->set('location', $countries);
     }
     
     /**

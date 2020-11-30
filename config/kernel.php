@@ -50,6 +50,7 @@ return [
         'validation'        => \App\Middleware\ValidationMiddleware::class,
         'expire'            => \App\Middleware\RouteExpirationMiddleware::class,
         'commence'          => \App\Middleware\CommenceAccessMiddleware::class,
+        'location'          => \App\Middleware\BlockLocationMiddleware::class,
     ],
 
 ];
