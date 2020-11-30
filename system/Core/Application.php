@@ -388,16 +388,20 @@ class Application
 
     protected function code(int $code)
     {
-        $uri = $this->uri;
-
         if($code !== 200)
         {
             $this->success = false;
-            $this->promise('error', function() use ($uri) {
+            $this->promise('error', function() {
                 $sess = new Session('errors');
-                $data = new Arr($sess->get($uri) ?? []);
-                $data->push(round(time()));
-                $sess->set($uri, $data->get());
+
+                if(!$sess->has('logs'))
+                {
+                    $sess->set('logs', []);
+                }
+
+                $data = new Arr($sess->get('logs'));
+                $data->push(time());
+                $sess->set('logs', $data->get());
             });
         }
         else

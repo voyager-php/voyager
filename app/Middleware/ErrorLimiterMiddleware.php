@@ -19,17 +19,16 @@ class ErrorLimiterMiddleware extends Middleware
     protected function handle(Request $request)
     {
         $hit = 0;
-        $uri = $request->uri();
         $session = new Session('errors');
         $ago = round(time() - 60);
         $arr = new Arr();
         
-        if(!$session->has($uri))
+        if(!$session->has('logs'))
         {
-            $session->set($uri, []);
+            $session->set('logs', []);
         }
 
-        foreach($session->get($uri) as $timestamp)
+        foreach($session->get('logs') as $timestamp)
         {
             if($timestamp >= $ago)
             {
@@ -38,7 +37,7 @@ class ErrorLimiterMiddleware extends Middleware
             }
         }
 
-        $session->set($uri, $arr->get());
+        $session->set('logs', $arr->get());
 
         if(env('APP_ERROR_LIMIT') <= $hit)
         {
