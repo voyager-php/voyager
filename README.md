@@ -18,7 +18,7 @@ Voyager is a fast, lightweight and open-source web application framework that pr
 
 **Instalation**
 
-1. Create new project by using composer *"composer create-project jameslevi/voyager=v1.0.2 ."* command and wait for composer to download and install your fresh voyager project.
+1. Create new project by using composer *"composer create-project jameslevi/voyager=v1.0.3-beta ."* command and wait for composer to download and install your fresh voyager project.
 2. Using your terminal, run the atmos command *"php atmos --init"* to generate your .env file and API key for your project.
 3. Serve your project using the *"php atmos serve:80"* command to start PHP built-in server in localhost at port 80.
 4. Run the command *"php atmos project:debug"* to start your development.

@@ -4,11 +4,11 @@
 //
 //  VOYAGER FRAMEWORK
 //  ----------------------------------------
-//  http://github.com/jameslevi/voyager
+//  https://github.com/voyager-php/voyager
 //
 ////////////////////////////////////////////
 //
-//  Version: v1.0.2
+//  Version: v1.0.3 (Beta)
 //  Author: James Crisostomo
 //  Email: nerdlabenterprise@gmail.com
 //
