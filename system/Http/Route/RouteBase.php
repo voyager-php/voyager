@@ -46,6 +46,7 @@ abstract class RouteBase
             'csrf'                  => false,
             'authentication'        => false,
             'cors'                  => false,
+            'ip'                    => false,
             'ajax'                  => false,
             'static'                => false,
             'cache'                 => null,
@@ -217,6 +218,23 @@ abstract class RouteBase
     {
         $this->middlewares->push('cors');
         return $this->set('cors', $cors);
+    }
+
+    /**
+     * Enable IP address checking in middleware.
+     * 
+     * @param   bool $ip
+     * @return  $this
+     */
+
+    public function checkIP(bool $ip = true)
+    {
+        if($ip)
+        {
+            $this->middlewares->push('ip');
+        }
+
+        return $this->set('ip', $ip);
     }
 
     /**
