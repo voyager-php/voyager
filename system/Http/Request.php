@@ -4,6 +4,7 @@ namespace Voyager\Http;
 
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
+use Voyager\Util\Data\Collection;
 
 class Request
 {
@@ -248,18 +249,33 @@ class Request
 
     public function origin()
     {
-        if($this->server->hasKey('HTTP_ORIGIN'))
+        if($this->server->hasKey('HTTP_ORIGIN') && $this->validateIP('HTTP_ORIGIN'))
         {
             return $this->server('HTTP_ORIGIN');
         }
-        else if($this->server->hasKey('HTTP_REFERER'))
+        else if($this->server->hasKey('HTTP_REFERER') && $this->validateIP('HTTP_REFERER'))
         {
             return $this->server('HTTP_REFERER');
         }
         else
         {
-            return $this->server('REMOTE_ADDR');
+            if($this->validateIP('REMOTE_ADDR'))
+            {
+                return $this->server('REMOTE_ADDR');
+            }
         }
+    }
+
+    /**
+     * Validate IP address from string.
+     * 
+     * @param   string $key
+     * @return  bool
+     */
+
+    private function validateIP(string $key)
+    {
+        return filter_var($this->server($key), FILTER_VALIDATE_IP);
     }
 
     /**
@@ -271,6 +287,38 @@ class Request
     public function time()
     {
         return $this->server('REQUEST_TIME_FLOAT');
+    }
+
+    /**
+     * Return location details by ip address.
+     * 
+     * @return  \Voyager\Util\Data\Collection
+     */
+
+    public function getLocation()
+    {
+        if(!$this->localhost())
+        {
+            $origin = $this->origin();
+            
+            if(!is_null($origin))
+            {
+                $parse = @json_decode(file_get_contents("http://geoplugin.net/json.gp?ip=" . $origin), true);
+
+                return new Collection([
+                    'status'                        => $parse['geoplugin_status'],
+                    'success'                       => $parse['geoplugin_status'] === 200,
+                    'country_code'                  => $parse['geoplugin_countryCode'],
+                    'country'                       => $parse['geoplugin_countryName'],
+                    'continent_code'                => $parse['geoplugin_continentCode'],
+                    'continent'                     => $parse['geoplugin_continentName'],
+                    'latitude'                      => $parse['geoplugin_latitude'],
+                    'timezone'                      => $parse['geoplugin_timezone'],
+                    'currency'                      => $parse['geoplugin_currencySymbol'],
+                    'exchange_rate'                 => $parse['geoplugin_currencyConverter'],
+                ]);
+            }
+        }
     }
 
 }
