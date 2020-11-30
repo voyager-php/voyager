@@ -11,7 +11,7 @@
     use Voyager\Util\Http\Session;
     use Voyager\Util\Str as Builder;
 
-/**
+    /**
      * Check if variable is a closure.
      * 
      * @param   mixed $closure
@@ -108,6 +108,49 @@
         function permission(string $key)
         {
             return Auth::hasPermission($key);
+        }
+    }
+
+    /**
+     * Return the current user id.
+     * 
+     * @return  mixed
+     */
+
+    if(!function_exists('user_id'))
+    {
+        function user_id()
+        {
+            return Auth::userId();
+        }
+    }
+
+    /**
+     * Get authentication data.
+     * 
+     * @param   string $key
+     * @return  mixed
+     */
+
+    if(!function_exists('auth'))
+    {
+        function auth(string $key)
+        {
+            return Auth::get($key);
+        }
+    }
+
+    /**
+     * Return true if current session is authenticated.
+     * 
+     * @return  bool
+     */
+
+    if(!function_exists('authenticated'))
+    {
+        function authenticated()
+        {
+            return Auth::authenticated();
         }
     }
 
