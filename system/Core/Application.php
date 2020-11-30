@@ -3,6 +3,7 @@
 namespace Voyager\Core;
 
 use Closure;
+use Voyager\Facade\Cache;
 use Voyager\Facade\Request;
 use Voyager\Facade\Str;
 use Voyager\Http\Middleware\Kernel;
@@ -252,20 +253,26 @@ class Application
 
             $this->setInitialConfigurations();
             $this->phpversion = phpversion();
-            
-            // Check if application requires secure connection.
-
-            if(!Request::localhost() && env('APP_SECURE', false))
-            {
-                redirect('https' . Str::move(Request::url(), 4));
-            }
+            $this->route = new Collection(Cache::get($this->uri) ?? []);
 
             // Start route matching.
 
-            if(is_null($this->route))
+            if($this->route->empty())
             {
                 $this->route = Router::init($this->uri)->getRoute();
 
+                $route = $this->route->toArray();
+                $uri = $this->uri;
+                
+                $this->promise('cache_route', function() use($route, $uri) {
+                    
+                    if(is_null(Cache::get($uri)) && app()->cache)
+                    {
+                        Cache::store($uri, $route);
+                    }
+
+                });
+                
                 if($this->route->empty())
                 {
                     abort(404);
