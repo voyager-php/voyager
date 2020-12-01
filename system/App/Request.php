@@ -3,6 +3,7 @@
 namespace Voyager\App;
 
 use Voyager\Http\File\DownloadManager;
+use Voyager\Http\File\FileManager;
 use Voyager\Http\File\UploadManager;
 use Voyager\Http\Request as Data;
 use Voyager\Util\Arr;
@@ -184,6 +185,20 @@ class Request
     public function upload(string $key)
     {
         return new UploadManager($key, $this);
+    }
+
+    /**
+     * Show file instead of downloading it.
+     * 
+     * @param   string $filename
+     * @return  bool
+     */
+
+    public function file(string $filename)
+    {
+        $manager = new FileManager($filename);
+
+        return $manager->success();
     }
 
 }
