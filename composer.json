@@ -12,8 +12,7 @@
         "psr-4": {
             "Voyager\\": "system/",
             "App\\": "app/",
-            "Components\\": "resource/view/components/",
-            "Monsoon\\": "system/Resource/Monsoon/"
+            "Components\\": "resource/view/components/"
         }
     }
 }
