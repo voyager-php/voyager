@@ -332,9 +332,16 @@ class TemplateEngine
             }
         }
 
-        if(app()->static_page)
+        if(app()->static_page && app()->cache)
         {
-            Dir::make('storage/cache/html/', $hash . '.html', $html);
+            $path = 'storage/cache/html/';
+
+            if(!Dir::exist($path))
+            {
+                Dir::makeFolder('storage/cache/', 'html');
+            }
+
+            Dir::make($path, $hash . '.html', $html);
         }
 
         return $html;

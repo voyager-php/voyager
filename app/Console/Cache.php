@@ -39,7 +39,22 @@ class Cache extends Console
 
         if($cleared)
         {
-            $msg->success('Cache files has been cleared.');
+            $msg->success('Cache file has been cleared.');
+        }
+
+        $html = new Directory('storage/cache/html/');
+
+        if($html->exist())
+        {
+            foreach($html->files() as $file)
+            {
+                if($file->is('html'))
+                {
+                    $file->delete();
+                }
+            }
+
+            $msg->success('Static html cache files have been cleared.');
         }
 
         $css = new Directory('public/css/static/');
@@ -54,7 +69,7 @@ class Cache extends Console
                 }
             }
 
-            $msg->success('Static css cache file has been cleared.');
+            $msg->success('Static css cache files have been cleared.');
         }
 
         $js = new Directory('public/js/static/');
@@ -69,7 +84,7 @@ class Cache extends Console
                 }
             }
 
-            $msg->success('Static javascript file has been deleted.');
+            $msg->success('Static javascript file have been deleted.');
         }
     }
 

@@ -96,7 +96,7 @@ class Command
             }
             else if($keyword === '--habibi')
             {
-                $msg->set('Dedicated to my one an only habibi {yellow}(My Love){/yellow}, Nica Magpayo.');
+                $msg->set('Dedicated to my one and only habibi {yellow}(My Love){/yellow}, Nica Magpayo.');
             }
             else if(Str::equal($keyword, ['--init', '-i']))
             {
