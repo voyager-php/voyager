@@ -16,14 +16,6 @@ class DownloadManager
     private $filename;
 
     /**
-     * Request object instance.
-     * 
-     * @var \Voyager\App\Request
-     */
-
-    private $request;
-
-    /**
      * Create new instance of download manager.
      * 
      * @param   string $filename
@@ -31,10 +23,9 @@ class DownloadManager
      * @return  void
      */
 
-    public function __construct(string $filename, Request $request)
+    public function __construct(string $filename)
     {
         $this->filename = Str::moveFromStart($filename, '/');
-        $this->request = $request;
     }
 
     /**
@@ -56,8 +47,7 @@ class DownloadManager
             header('Content-Type: application/octet-stream');
             header('Content-Length: ' . filesize($file));
             readfile($file);
-
-            return true;
+            app()->terminate = true;
         }
 
         return false;

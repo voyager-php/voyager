@@ -9,6 +9,12 @@ use Voyager\Util\Data\Collection;
 
 class Response
 {
+    /**
+     * Default response content type.
+     * 
+     * @var string
+     */
+
     private $contentType = 'text/html';
 
     /**
@@ -81,7 +87,7 @@ class Response
         }
         else if(is_string($response))
         {
-            if($response === '')
+            if(empty($response))
             {
                 $this->abort();
             }
@@ -114,7 +120,13 @@ class Response
 
     private function setJsonOutput(string $output)
     {
-        $this->contentType = 'application/json';
+        json_decode($output);
+
+        if(json_last_error() === JSON_ERROR_NONE)
+        {
+            $this->contentType = 'application/json';
+        }
+        
         $this->output = $output;
     }
 

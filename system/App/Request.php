@@ -142,21 +142,21 @@ class Request
     }
 
     /**
-     * Return formatted response for API.
+     * Return default formatted response for API.
      * 
      * @param   mixed $data
      * @param   array $meta
      * @return  \Voyager\Util\Data\Collection
      */
 
-    public function response($data = null, array $meta = [])
+    public function apiResponse($data = null, array $meta = [])
     {
         return new Collection([
-            'code'                  => app()->code,
-            'status'                => app()->success && app()->locale === 'en' ? 'OK' : lang('status.code.' . app()->code . '@statuscode'),
+            'code'                  => $this->statusCode(),
+            'status'                => $this->statusMessage(),
             'success'               => app()->success,
             'meta'                  => $meta,
-            'data'                  => $data,
+            'data'                  => $data ?? [],
         ]);
     }
 
@@ -169,7 +169,7 @@ class Request
 
     public function download(string $filename)
     {
-        $manager = new DownloadManager($filename, $this);
+        $manager = new DownloadManager($filename);
         
         return $manager->exec();
     }
