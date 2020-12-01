@@ -181,7 +181,7 @@ class DBResult extends DBResponse
             }
         }
 
-        return $request->response($result->get(), [
+        return $request->apiResponse($result->get(), [
             'total'             => $total,
             'paginate'          => true,
             'page'              => $page,
