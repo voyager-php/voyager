@@ -769,7 +769,7 @@ class Make extends Console
     protected function component(string $name)
     {
         $msg = new Message();
-        $dir = $this->manageFolder('resource/view/component', 'component', false);
+        $this->manageFolder('resource/view/component', 'component', false);
         $name = ucfirst($name);
 
         if(!Dir::exist('resource/view/component/' . $name))
@@ -823,6 +823,50 @@ class Make extends Console
         else
         {
             $msg->error('Component folder already exist from the directory.');
+        }
+    }
+
+    /**
+     * Create new view section file.
+     * 
+     * @param   string $name
+     * @return  void
+     */
+
+    protected function section(string $name)
+    {
+        $msg = new Message();
+        $dir = $this->manageFolder('resource/view/section', 'section', false);
+        $filename = $name . '.html';
+
+        if(!$dir->has($filename))
+        {
+            $builder = new Builder('<template>');
+            $builder->br()
+                    ->br()
+                    ->br()
+                    ->append('</template>')
+                    ->br()
+                    ->br()
+                    ->append('<script type="text/javascript">')
+                    ->br()
+                    ->br()
+                    ->br()
+                    ->append('</script>')
+                    ->br()
+                    ->br()
+                    ->append('<style type="text/css">')
+                    ->br()
+                    ->br()
+                    ->br()
+                    ->append('</style>');
+
+            $dir->make($filename, $builder->get());
+            $msg->success('View section file was successfully created.');
+        }
+        else
+        {
+            $msg->error('View section file already exist.');
         }
     }
 
