@@ -118,9 +118,9 @@ class Application
      */
 
     public function __construct() {
-        $this->data = new Arr();
-        $this->promises = new Arr();
-        $this->headers = new Arr();
+        $this->data                     = new Arr();
+        $this->promises                 = new Arr();
+        $this->headers                  = new Arr();
     }
 
     /**
@@ -265,12 +265,10 @@ class Application
                 $uri = $this->uri;
                 
                 $this->promise('cache_route', function() use($route, $uri) {
-                    
                     if(is_null(Cache::get($uri)) && app()->cache)
                     {
                         Cache::store($uri, $route);
                     }
-
                 });
                 
                 if($this->route->empty())
@@ -406,9 +404,10 @@ class Application
                     $sess->set('logs', []);
                 }
 
-                $data = new Arr($sess->get('logs'));
-                $data->push(time());
-                $sess->set('logs', $data->get());
+                $data = $sess->get('logs');
+                $data[] = time();
+
+                $sess->set('logs', $data);
             });
         }
         else

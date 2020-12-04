@@ -71,6 +71,11 @@ class Lang extends Translations
     {
         $cache = Cache::get('locale');
 
+        if(!is_null(static::$cache) && is_null($cache))
+        {
+            $cache = static::$cache->get();
+        }
+
         if(is_null($cache))
         {
             $dir = new Directory('resource/locale/');
@@ -98,6 +103,8 @@ class Lang extends Translations
                         }
                     }
                 }
+
+                static::$cache = $data->get();
 
                 Cache::store('locale', $data->get());
             }

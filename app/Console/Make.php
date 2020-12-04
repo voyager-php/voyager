@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Voyager\App\Console;
 use Voyager\Console\Message;
+use Voyager\Facade\Dir;
 use Voyager\Facade\File;
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
@@ -50,14 +51,15 @@ class Make extends Console
      * 
      * @param   string $path
      * @param   string $name
+     * @param   bool $ucfirst
      * @return  mixed
      */
 
-    private function manageFolder(string $path, string $name)
+    private function manageFolder(string $path, string $name, bool $ucfirst = true)
     {
         $path = Str::moveFromEnd($path, '/');
 
-        $name = ucfirst($name);
+        $name = $ucfirst ? ucfirst($name) : $name;
         $msg = new Message();
         $dir = new Directory($path);
 
@@ -711,6 +713,117 @@ class Make extends Console
         }
 
         $msg->success('Resource was successfully created.');
+    }
+
+    /**
+     * Create new view content file.
+     * 
+     * @param   string $name
+     * @return  void
+     */
+
+    protected function content(string $name)
+    {
+        $msg = new Message();
+        $dir = $this->manageFolder('resource/view/content', 'content', false);
+        $filename = $name . '.html';        
+
+        if(!$dir->has($filename))
+        {
+            $builder = new Builder('<template extend="master">');
+            $builder->br()
+                    ->br()
+                    ->br()
+                    ->append('</template>')
+                    ->br()
+                    ->br()
+                    ->append('<script type="text/javascript">')
+                    ->br()
+                    ->br()
+                    ->br()
+                    ->append('</script>')
+                    ->br()
+                    ->br()
+                    ->append('<style type="text/css">')
+                    ->br()
+                    ->br()
+                    ->br()
+                    ->append('</style>');
+
+            $dir->make($filename, $builder->get());
+            $msg->success('View content file was successfully created.');
+        }
+        else
+        {
+            $msg->error('View content file already exist.');
+        }
+    }
+
+    /**
+     * Create new view component file.
+     * 
+     * @param   string $name
+     * @return  void
+     */
+
+    protected function component(string $name)
+    {
+        $msg = new Message();
+        $dir = $this->manageFolder('resource/view/component', 'component', false);
+        $name = ucfirst($name);
+
+        if(!Dir::exist('resource/view/component/' . $name))
+        {
+            $folder = $this->manageFolder('resource/view/component/' . $name, $name);
+
+            $class = new Builder('<?php');
+            $class->br()
+                  ->br()
+                  ->append('namespace Components\\' . $name . ';')
+                  ->br()
+                  ->br()
+                  ->append('use Voyager\App\Components;')
+                  ->br()
+                  ->br()
+                  ->append('class ' . $name . ' extends Components')
+                  ->br()
+                  ->append('{')
+                  ->br()
+                  ->br()
+                  ->br()
+                  ->br()
+                  ->append('}');  
+
+            $folder->make($name . '.php', $class->get());
+            $msg->success('Component class file was successfully created.');
+
+            $builder = new Builder('<template>');
+            $builder->br()
+                    ->br()
+                    ->br()
+                    ->append('</template>')
+                    ->br()
+                    ->br()
+                    ->append('<script type="text/javascript">')
+                    ->br()
+                    ->br()
+                    ->br()
+                    ->append('</script>')
+                    ->br()
+                    ->br()
+                    ->append('<style type="text/css">')
+                    ->br()
+                    ->br()
+                    ->br()
+                    ->append('</style>');
+
+            $folder->make($name . '.html', $builder->get());
+            $msg->success('Component template file was successfully created.');
+        }
+        else
+        {
+            $msg->error('Component folder already exist from the directory.');
+        }
     }
 
 }

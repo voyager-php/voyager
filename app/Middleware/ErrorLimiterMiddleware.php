@@ -4,7 +4,6 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
-use Voyager\Util\Arr;
 use Voyager\Util\Http\Session;
 
 class ErrorLimiterMiddleware extends Middleware
@@ -21,7 +20,7 @@ class ErrorLimiterMiddleware extends Middleware
         $hit = 0;
         $session = new Session('errors');
         $ago = round(time() - 60);
-        $arr = new Arr();
+        $arr = [];
         
         if(!$session->has('logs'))
         {
@@ -32,12 +31,12 @@ class ErrorLimiterMiddleware extends Middleware
         {
             if($timestamp >= $ago)
             {
-                $arr->push($timestamp);
+                $arr[] = $timestamp;
                 $hit++;
             }
         }
 
-        $session->set('logs', $arr->get());
+        $session->set('logs', $arr);
 
         if(env('APP_ERROR_LIMIT') <= $hit)
         {

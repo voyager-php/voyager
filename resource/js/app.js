@@ -83,9 +83,9 @@
 
     voyager.get = function(key) 
     {
-        if(objectHasKey(app.get, key)) 
+        if(objectHasKey(app.get(), key)) 
         {
-            return app.get[key];
+            return app.get()[key];
         }
 
         return null;
@@ -93,9 +93,9 @@
 
     voyager.post = function(key) 
     {
-        if(objectHasKey(app.post, key))
+        if(objectHasKey(app.post(), key))
         {
-            return app.post[key];
+            return app.post()[key];
         }
 
         return null;
@@ -103,9 +103,9 @@
 
     voyager.resource = function(key) 
     {
-        if(objectHasKey(app.resource, key))
+        if(objectHasKey(app.resource(), key))
         {
-            return app.resource[key];
+            return app.resource()[key];
         }
 
         return null;

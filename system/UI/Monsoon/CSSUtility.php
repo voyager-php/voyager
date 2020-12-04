@@ -73,7 +73,7 @@ class CSSUtility
             if(!Str::startWith($tag, ['!', '/']) && $tag !== '' && Str::has($tag, 'class="'))
             {
                 $break = Str::break($tag, 'class="');
-                $split = explode(' ', Str::move(Str::break($break[1], '>')[0], 0, 1));
+                $split = explode(' ', Str::break($break[1], '"')[0]);
                 $css = new Arr();
 
                 foreach($split as $util)

@@ -20,6 +20,14 @@ abstract class Components
     private $attributes;
 
     /**
+     * HTML attributes that can be defined from parent class.
+     * 
+     * @var array
+     */
+
+    protected $attr = [];
+
+    /**
      * Create new component instance.
      * 
      * @return  void
@@ -33,6 +41,8 @@ abstract class Components
             'slot'          => null,
             'show'          => true,
         ]);
+
+        $this->attributes->merge($this->attr);
     }
 
     /**
@@ -104,7 +114,7 @@ abstract class Components
     {
         $this->rendered();
         $namespace = new Builder(get_called_class());
-        $reader = new Reader($namespace->move(1)->replace('\\', '/')->append('.html')->prepend('resource/view/c')->get());
+        $reader = new Reader($namespace->move(10)->replace('\\', '/')->append('.html')->prepend('resource/view/component')->get());
         
         if($reader->exist())
         {

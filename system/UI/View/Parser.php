@@ -113,8 +113,13 @@ class Parser
             }
             else
             {
-                $str->append($segment);
+                $str->append('[####' . $segment);
             }
+        }
+
+        if($str->startWith('[####'))
+        {
+            $str->move(5);
         }
         
         return $str->get();
@@ -245,8 +250,13 @@ class Parser
             }
             else
             {
-                $str->append($segment);
+                $str->append('{{' . $segment);
             }
+        }
+
+        if(!$str->empty() && $str->startWith('{{'))
+        {
+            $str->move(2);
         }
 
         return $str->get();
@@ -267,16 +277,16 @@ class Parser
         {
             if(Str::startWith($segment, '('))
             {
-                $func = Str::move(Str::break($segment, PHP_EOL)[0], 2, 2);
+                $func = Str::move(Str::break($segment, ')')[0], 2, 1);
                 $file = new Reader(TemplateEngine::resourcePath(str_replace('.', '/', $func)));
-                $trail = Str::break($segment, PHP_EOL)[1] ?? '';
+                $trail = Str::break($segment, ')')[1] ?? '';
                 
                 if($file->exist())
                 {
                     $content = $file->content();
                     $script = Parser::script($content);
                     $styles = Parser::style($content);
-                    $hash = Str::hash($func, 'md5');
+                    $hash = Str::hash($func);
 
                     if(!is_null($script))
                     {
@@ -320,7 +330,7 @@ class Parser
         {
             if(Str::startWith($segment, Directives::keys()))
             {
-                $directive = Str::break($segment, PHP_EOL)[0];
+                $directive = Str::break($segment, "\n")[0];
                 $name = Str::break($directive, '(')[0];
                 $value = null;
 
@@ -330,13 +340,18 @@ class Parser
                 }
 
                 $this->callable->push('<?php echo Voyager\Resource\View\Directives::call(\'' . $name . '\',\'' . $value . '\'); ?>');
-                $str->append('[#### ' . $this->index . ' ####]' . PHP_EOL . Str::move($segment, strlen($directive)));
+                $str->append('[#### ' . $this->index . ' ####]' . "\n" . Str::move($segment, strlen($directive)));
                 $this->index++;
             }
             else
             {
                 $str->append('@' . $segment);
             }
+        }
+
+        if(!$str->empty() && $str->startWith('@'))
+        {
+            $str->move(1);
         }
 
         return Str::moveFromStart($str, '@');
@@ -358,17 +373,17 @@ class Parser
         {
             if(Str::startWith($segment, $directives))
             {
-                $break = Str::break($segment, PHP_EOL);
+                $break = Str::break($segment, "\n");
                 
                 if(Str::equal(Str::break($break[0], '(')[0], ['else', 'elseif']))
                 {
                     $this->callable->push('<?php } ' . $break[0] . ' { ?>');
-                    $str->append('[#### ' . $this->index . ' ####]' . PHP_EOL . $break[1]);
+                    $str->append('[#### ' . $this->index . ' ####]' . "\n" . ($break[1] ?? ''));
                 }
                 else
                 {
                     $this->callable->push('<?php ' . $break[0] . ' { ?>');
-                    $str->append('[#### ' . $this->index . ' ####]' . PHP_EOL . $break[1]);
+                    $str->append('[#### ' . $this->index . ' ####]' . "\n" . ($break[1] ?? ''));
                 }
 
                 $this->index++;
@@ -459,7 +474,7 @@ class Parser
                                 
                                 if($name === 'class')
                                 {
-                                    $str = Str::moveFromEnd($str, ' ');
+                                    $str->moveFromEnd(' ');
                                     $classes = new Arr();
 
                                     foreach(explode(' ', $value) as $class)
@@ -517,6 +532,10 @@ class Parser
                                     {
                                         $str->append(Str::moveFromEnd($attr, '"'));
                                     }
+                                }
+                                else if(Str::endWith($attr, '=""'))
+                                {
+                                    $str->append($attr);
                                 }
                             }
                         }

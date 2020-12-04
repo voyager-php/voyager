@@ -143,6 +143,7 @@ class Response
             $string = str_replace(['\r', '\n'], ' ', trim($this->output));
             $string = preg_replace('!\s+!', ' ', $string);
             $string = str_replace('> ', '>', $string);
+            $string = str_replace(' <', '<', $string);
 
             return $string;
         }
