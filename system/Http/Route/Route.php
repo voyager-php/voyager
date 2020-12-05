@@ -51,6 +51,11 @@ class Route extends RouteBase
             {
                 if(!in_array($key, ['verb', 'uri']))
                 {
+                    if(array_key_exists($key, $this->middleware_keys) && !is_null($value) && $value)
+                    {
+                        $this->middlewares->push($this->middleware_keys[$key]);
+                    }
+
                     $this->set($key, $value);
                 }
                 else if($key === 'verb')

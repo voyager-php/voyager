@@ -24,6 +24,23 @@ abstract class RouteBase
     protected $middlewares;
 
     /**
+     * Store middleware key of a route property.
+     * 
+     * @var array
+     */
+
+    protected $middleware_keys = [
+        'csrf'              => 'csrf',
+        'cors'              => 'cors',
+        'ip'                => 'ip',
+        'ajax'              => 'ajax',
+        'commence'          => 'commence',
+        'expiration'        => 'expire',
+        'validation'        => 'validation',
+        'location'          => 'location',
+    ];
+
+    /**
      * Set route data.
      * 
      * @return void
