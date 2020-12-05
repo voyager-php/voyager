@@ -266,7 +266,14 @@ class Application
                 }
             }
 
-            $this->redirect = $this->route->redirect;
+            if(!is_null($this->route->redirect))
+            {
+                $destination = $this->route->redirect;
+
+                $this->promise('redirection', function() use ($destination) {
+                    app()->redirect = $destination;
+                });
+            }
 
             if(!is_null($this->route->cache))
             {
@@ -478,7 +485,7 @@ class Application
         if(!is_null($destination))
         {
             $this->callPromises();
-            header('Location: ' . $destination, true, $this->code);
+            header('Location: ' . $destination, true);
             exit;
         }
     }
