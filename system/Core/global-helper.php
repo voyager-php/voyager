@@ -384,8 +384,13 @@
     {
         function lang(string $id, string $lang = null)
         {
+            if(is_null($lang))
+            {
+                $lang = app()->route('locale') ?? env('APP_LOCALE');
+            }
+
             $instance = new Lang($id);
-            return $instance->get($lang ?? app()->route('locale'));
+            return $instance->get($lang);
         }
     }
 

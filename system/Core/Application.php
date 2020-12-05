@@ -284,9 +284,15 @@ class Application
 
             $controller = 'App\Controller\\' . str_replace('.', '\\', $this->route->controller);
             $instance = new $controller($this->route);
+            $response = $instance->getResponse();
+
+            if(is_null($response))
+            {
+                abort(204);
+            }
 
             $this->setHeaders();
-            $this->response = $instance->getResponse();
+            $this->response = $response;
             $this->terminate = true;
         }
     }
