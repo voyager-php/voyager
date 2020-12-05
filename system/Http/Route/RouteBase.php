@@ -245,7 +245,7 @@ abstract class RouteBase
      * @param   
      */
 
-    public function ajax(bool $ajax)
+    public function ajax(bool $ajax = true)
     {
         $this->middlewares->push('ajax');
         return $this->set('ajax', $ajax);
