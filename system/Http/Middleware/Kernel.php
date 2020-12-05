@@ -72,14 +72,14 @@ class Kernel
             {
                 $middlewares = $kernel->require();
                 Cache::store('middleware', $middlewares);
+
+                return $middlewares;
             }
         }
         else
         {
-            $middlewares = $cache;
+            return $cache;
         }
-
-        return $middlewares;
     }
 
     /**
