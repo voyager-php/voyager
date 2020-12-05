@@ -382,10 +382,10 @@
 
     if(!function_exists('lang'))
     {
-        function lang(string $id, string $lang = 'en')
+        function lang(string $id, string $lang = null)
         {
             $instance = new Lang($id);
-            return $instance->get($lang);
+            return $instance->get($lang ?? app()->route('locale'));
         }
     }
 
