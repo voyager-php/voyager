@@ -273,6 +273,11 @@ class Application
                 $this->cache = $this->route->cache;
             }
 
+            if(!is_null($this->route->timezone))
+            {
+                $this->timezone = $this->route->timezone;
+            }
+
             if(!is_null($this->route->locale))
             {
                 $this->locale = $this->route->locale;
