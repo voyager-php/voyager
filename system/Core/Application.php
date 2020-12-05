@@ -118,6 +118,7 @@ class Application
      */
 
     public function __construct() {
+        $this->uri                      = Request::uri();
         $this->data                     = new Arr();
         $this->promises                 = new Arr();
         $this->headers                  = new Arr();
@@ -233,29 +234,18 @@ class Application
     {
         if(!$this->running)
         {
-            // Provide some helping hands.
-
             require 'global-helper.php';
 
-            // Load the env file.
-
-            $this->uri = Request::uri();
             $this->env = new Collection(Env::get() ?? []);
             
-            // If .env is missing, terminate application.
-
             if($this->env->empty())
             {
                 $this->terminate = true;
             }
 
-            // Set initial configurations.
-
             $this->setInitialConfigurations();
             $this->phpversion = phpversion();
             $this->route = new Collection(Cache::get($this->uri) ?? []);
-
-            // Start route matching.
 
             if($this->route->empty())
             {
@@ -277,8 +267,6 @@ class Application
                 }
             }
 
-            // Set reactive properties.
-            
             $this->redirect = $this->route->redirect;
 
             if(!is_null($this->route->cache))
@@ -293,17 +281,11 @@ class Application
 
             $this->static_page = $this->route->static;
 
-            // Start middleware testing.
-
             new Kernel($this->route);
 
-            // Instantiate controller and fetch response.
-            
             $controller = 'App\Controller\\' . Str::replace($this->route->controller, '.', '\\');
             $instance = new $controller($this->route);
 
-            // Return response to user.
-            
             $this->setHeaders();
             $this->response = $instance->getResponse();
             $this->terminate = true;
