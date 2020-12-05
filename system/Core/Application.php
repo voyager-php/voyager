@@ -5,7 +5,6 @@ namespace Voyager\Core;
 use Closure;
 use Voyager\Facade\Cache;
 use Voyager\Facade\Request;
-use Voyager\Facade\Str;
 use Voyager\Http\Middleware\Kernel;
 use Voyager\Http\Response;
 use Voyager\Http\Route\Router;
@@ -283,7 +282,7 @@ class Application
 
             new Kernel($this->route);
 
-            $controller = 'App\Controller\\' . Str::replace($this->route->controller, '.', '\\');
+            $controller = 'App\Controller\\' . str_replace('.', '\\', $this->route->controller);
             $instance = new $controller($this->route);
 
             $this->setHeaders();
@@ -309,7 +308,7 @@ class Application
         }
         else
         {
-            header(Str::append($protocol, ' 200 OK'));
+            header($protocol . ' 200 OK');
         }
 
         if(!$this->route->empty())
