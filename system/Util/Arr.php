@@ -302,6 +302,17 @@ class Arr
     }
 
     /**
+     * Return all values from the array.
+     * 
+     * @return  array.
+     */
+
+    public function values()
+    {
+        return array_values($this->get());
+    }
+
+    /**
      * Sort the array randomly.
      * 
      * @return $this

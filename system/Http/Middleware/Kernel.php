@@ -108,7 +108,7 @@ class Kernel
         }
 
         $list->unique();
-        $list->set(array_values($list->get()));
+        $list->set($list->values());
 
         if(!$list->empty())
         {
