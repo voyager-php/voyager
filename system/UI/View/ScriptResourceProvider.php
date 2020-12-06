@@ -95,7 +95,7 @@ class ScriptResourceProvider
     private static function addLocaleData()
     {
         $data = [];
-        $locale = Lang::load()->get();
+        $locale = Lang::load();
         
         foreach($locale as $group_id => $group)
         {
@@ -103,7 +103,7 @@ class ScriptResourceProvider
 
             foreach($group as $key => $item)
             {
-                $items[str_replace('.', '_', $key)] = $item;
+                $items[str_replace('.', '_', $key)] = $item->data();
             }
 
             $data[$group_id] = $items;

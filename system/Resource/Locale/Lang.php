@@ -73,13 +73,13 @@ class Lang extends Translations
 
         if(!is_null(static::$cache) && is_null($cache))
         {
-            $cache = static::$cache->get();
+            $cache = static::$cache;
         }
 
         if(is_null($cache))
         {
             $dir = new Directory('resource/locale/');
-            $data = new Arr();
+            $data = [];
 
             if($dir->exist())
             {
@@ -91,22 +91,22 @@ class Lang extends Translations
 
                         if(!Locale::empty())
                         {
-                            $locales = new Arr();
+                            $locales = [];
 
                             foreach(Locale::get() as $locale)
                             {
-                                $locales->set($locale->getId(), $locale->data());
+                                $locales[$locale->getId()] = $locale;
                             }
 
-                            $data->set($file->name(), $locales->get());
+                            $data[$file->name()] = $locales;
                             Locale::clear();
                         }
                     }
                 }
 
-                static::$cache = $data->get();
+                static::$cache = $data;
 
-                Cache::store('locale', $data->get());
+                Cache::store('locale', $data);
             }
             
             return $data;
@@ -121,36 +121,69 @@ class Lang extends Translations
      * Return localize translation of key.
      * 
      * @param   string $lang
+     * @param   array $replace
      * @return  string
      */
 
     public function get(string $lang = 'en', array $replace = [])
     {
         $id = $this->id;
+        $backup = env('APP_BACKUP_LOCALE');
+        $response = $this->getTranslation($id, $lang);
+
+        if($response === $id && !is_null($backup))
+        {
+            $get = $this->getTranslation($id, $backup);
+
+            if($get !== $id)
+            {
+                $response = $get;
+            }
+        }
+
+        if(!empty($replace) && $response !== $id)
+        {
+            return $this->replaceTemplates($response, $replace);
+        }
+        else
+        {
+            return $response;
+        }
+    }
+
+    /**
+     * Return language translations.
+     * 
+     * @param   string $id
+     * @param   string $lang
+     * @return  string
+     */
+
+    private function getTranslation(string $id, string $lang)
+    {
         $cache = static::$cache;
         $filename = $this->filename;
-        $replace = new Arr($replace);
         $response = $id;
 
         if(is_null($filename))
         {
-            $locales = new Arr();
+            $locales = [];
 
-            foreach($cache->get() as $locale)
+            foreach($cache as $locale)
             {
                 foreach($locale as $key => $trans)
                 {
-                    $locales->set($key, $trans);
+                    $locales[$key] = $trans;
                 }
             }
 
-            if($locales->hasKey($id))
+            if(array_key_exists($id, $locales))
             {
-                $locale = new Arr($locales->get($id));
+                $locale = $locales[$id]->data();
                 
-                if($locale->hasKey($lang))
+                if(array_key_exists($lang, $locale))
                 {
-                    $response = $locale->get($lang);
+                    $response = $locale[$lang];
                 }
             }
         }
@@ -172,33 +205,24 @@ class Lang extends Translations
             }
         }
 
-        if(!$replace->empty())
-        {
-            return $this->replaceTemplates($response, $replace);
-        }
-        else
-        {
-            return $response;
-        }
+        return $response;
     }
 
     /**
      * Find and replace templates from string.
      * 
      * @param   string $string
+     * @param   array $replace
      * @return  string
      */
 
-    private function replaceTemplates(string $string, Arr $replace)
+    private function replaceTemplates(string $string, array $replace)
     {
-        if(!$replace->empty())
+        foreach($replace as $key => $value)
         {
-            foreach($replace->get() as $key => $value)
-            {
-                $string = str_replace('{' . $key . '}', $value, $string);
-            }
+            $string = str_replace('{' . $key . '}', $value, $string);
         }
-
+    
         return $string;
     }
 
