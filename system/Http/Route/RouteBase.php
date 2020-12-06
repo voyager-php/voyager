@@ -34,8 +34,8 @@ abstract class RouteBase
         'cors'              => 'cors',
         'ip'                => 'ip',
         'ajax'              => 'ajax',
-        'commence'          => 'commence',
-        'expiration'        => 'expire',
+        'accessibility'     => 'accessibility',
+        'expiration'        => 'accessibility',
         'validation'        => 'validation',
         'location'          => 'location',
     ];
@@ -69,7 +69,7 @@ abstract class RouteBase
             'cache'                 => null,
             'redirect'              => null,
             'expiration'            => null,
-            'commence'              => null,
+            'accessibility'         => null,
             'validation'            => null,
             'permission'            => [],
             'location'              => [],
@@ -281,20 +281,20 @@ abstract class RouteBase
     }
 
     /**
-     * Set commence access date and time.
+     * Set date and time when route will be accessible.
      * 
      * @param   string $datetime
      * @return  $this
      */
 
-    public function commence(string $datetime)
+    public function accessibleBy(string $datetime)
     {
-        $this->middlewares->push('commence');
-        return $this->set('commence', $datetime);
+        $this->middlewares->push('accessibility');
+        return $this->set('accessibility', $datetime);
     }
 
     /**
-     * Set route expiration.
+     * Set datetime when route will expire.
      * 
      * @param   string $datetime
      * @return  $this
@@ -302,7 +302,7 @@ abstract class RouteBase
 
     public function expiration(string $datetime)
     {
-        $this->middlewares->push('expire');
+        $this->middlewares->push('accessibility');
         return $this->set('expiration', $datetime);
     }
 

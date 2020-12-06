@@ -6,7 +6,7 @@ use Voyager\App\Middleware;
 use Voyager\App\Request;
 use Voyager\Util\Chronos;
 
-class CommenceAccessMiddleware extends Middleware
+class RouteAccessibilityMiddleware extends Middleware
 {
     /**
      * Handle request logic.
@@ -17,11 +17,14 @@ class CommenceAccessMiddleware extends Middleware
 
     protected function handle(Request $request)
     {
-        $datetime = Chronos::parse($request->route('commence'));
-
-        if($datetime->isFuture())
+        if(!is_null($request->route('accessibility')) && Chronos::parse($request->route('accessibility'))->isFuture())
         {
             abort(403);
+        }
+
+        if(!is_null($request->route('expiration')) && Chronos::parse($request->route('expiration'))->hasPassed())
+        {
+            abort(410);
         }
     }
 

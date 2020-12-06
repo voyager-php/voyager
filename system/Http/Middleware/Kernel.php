@@ -107,6 +107,9 @@ class Kernel
             $list->merge($groups->{$this->route->middleware});
         }
 
+        $list->unique();
+        $list->set(array_values($list->get()));
+
         if(!$list->empty())
         {
             require path('system/Http/Middleware/helper.php');

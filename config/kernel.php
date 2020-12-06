@@ -48,8 +48,7 @@ return [
         'csrf'              => \App\Middleware\CSRFTokenMiddleware::class,
         'ip'                => \App\Middleware\IPBlockerMiddleware::class,
         'validation'        => \App\Middleware\ValidationMiddleware::class,
-        'expire'            => \App\Middleware\RouteExpirationMiddleware::class,
-        'commence'          => \App\Middleware\CommenceAccessMiddleware::class,
+        'accessibility'     => \App\Middleware\RouteAccessibilityMiddleware::class,
         'location'          => \App\Middleware\BlockLocationMiddleware::class,
     ],
 
