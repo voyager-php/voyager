@@ -16,10 +16,18 @@
 
 // Include composer autoload mechanism to
 // import third party modules and libraries.
+// If composer is not available, use the
+// native autoload mechanism.
 
 if(file_exists(__DIR__.'/../vendor/autoload.php'))
 {
     require __DIR__.'/../vendor/autoload.php';
+}
+else
+{
+    $root = '../';
+
+    require __DIR__ . '/../autoload.php';
 }
 
 // Initiate application and return instance
