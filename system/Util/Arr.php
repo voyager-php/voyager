@@ -298,7 +298,7 @@ class Arr
 
     public function unique()
     {
-        return $this->set(array_unique($this->get()));
+        return $this->set(array_values(array_unique($this->get())));
     }
 
     /**
