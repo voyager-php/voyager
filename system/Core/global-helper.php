@@ -386,7 +386,7 @@
         {
             if(is_null($lang))
             {
-                $lang = app()->route('locale') ?? env('APP_LOCALE');
+                $lang = app()->locale ?? env('APP_LOCALE');
             }
 
             $instance = new Lang($id);

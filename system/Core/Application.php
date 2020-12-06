@@ -275,11 +275,6 @@ class Application
                 });
             }
 
-            if(!is_null($this->route->cache))
-            {
-                $this->cache = $this->route->cache;
-            }
-
             if(!is_null($this->route->timezone))
             {
                 $this->timezone = $this->route->timezone;
@@ -288,6 +283,19 @@ class Application
             if(!is_null($this->route->locale))
             {
                 $this->locale = $this->route->locale;
+            }
+            else
+            {
+                $params = Request::get();
+                if($params->has('_lang'))
+                {
+                    $this->locale = $params->_lang;
+                }
+            }
+
+            if(!is_null($this->route->cache))
+            {
+                $this->cache = $this->route->cache;
             }
 
             $this->static_page = $this->route->static;
