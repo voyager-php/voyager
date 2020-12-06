@@ -17,18 +17,10 @@
 
 // Include composer autoload mechanism to
 // import third party modules and libraries.
-// If composer is not available, use the
-// native autoload mechanism.
 
 if(file_exists('vendor/autoload.php'))
 {
     require 'vendor/autoload.php';
-}
-else
-{
-    $root = '';
-
-    require 'autoload.php';
 }
 
 // Initiate console application.
