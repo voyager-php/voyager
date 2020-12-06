@@ -13,7 +13,7 @@ class Lang extends Translations
     /**
      * Store locale data.
      * 
-     * @var \Voyager\Util\Arr
+     * @var array
      */
 
     private static $cache;
@@ -189,17 +189,17 @@ class Lang extends Translations
         }
         else
         {
-            if($cache->hasKey($filename))
+            if(array_key_exists($filename, $cache))
             {
-                $locales = new Arr($cache->get($filename));
+                $locales = $cache[$filename];
 
-                if($locales->hasKey($id))
+                if(array_key_exists($id, $locales))
                 {
-                    $locale = new Arr($locales->get($id));
+                    $locale = $locales[$id]->data();
 
-                    if($locale->hasKey($lang))
+                    if(array_key_exists($lang, $locale))
                     {
-                        $response = $locale->get($lang);
+                        $response = $locale[$lang];
                     }
                 }
             }
