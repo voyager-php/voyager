@@ -212,12 +212,13 @@ class Route extends RouteBase
 
     public static function resource(string $prefix, string $controller)
     {
-        $name = str_replace('/', '.', Str::moveFromBothEnds($prefix, '/'));
-        $base = Str::moveFromEnd($prefix, '/') . '/';
+        $prefix = Str::moveFromBothEnds($prefix, '/');
+        $name = str_replace('/', '.', $prefix);
+        $base = $prefix . '/';
         
-        static::get($prefix, $controller . '@index')->name($name . '.index');
+        static::get($base, $controller . '@index')->name($name . '.index');
         static::get($base . 'create', $controller . '@create')->name($name . '.create');
-        static::post($base . 'create', $controller . '@store')->name($name . '.store');
+        static::post($base, $controller . '@store')->name($name . '.store');
         static::get($base . '{id}', $controller . '@show')->name($name . '.show');
         static::put($base . '{id}', $controller . '@update')->name($name . '.update');
         static::patch($base . '{id}', $controller . '@update')->name($name . '.update');
