@@ -8,7 +8,6 @@
 //
 ////////////////////////////////////////////
 //
-//  Version: v1.0.6
 //  Author: James Crisostomo
 //  Email: nerdlabenterprise@gmail.com
 //
