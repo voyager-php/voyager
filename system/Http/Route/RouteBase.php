@@ -2,6 +2,7 @@
 
 namespace Voyager\Http\Route;
 
+use Voyager\Facade\Str;
 use Voyager\Http\Security\AuthConfig;
 use Voyager\Util\Arr;
 
@@ -167,7 +168,16 @@ abstract class RouteBase
 
     public function middleware(string $middleware)
     {
-        return $this->set('middleware', $middleware);
+        if(Str::startWith($middleware, 'App\Middleware'))
+        {
+            $this->middlewares->push($middleware);
+
+            return $this;
+        }
+        else
+        {
+            return $this->set('middleware', $middleware);
+        }
     }
 
     /**

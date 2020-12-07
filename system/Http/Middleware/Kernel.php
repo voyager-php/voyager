@@ -4,6 +4,7 @@ namespace Voyager\Http\Middleware;
 
 use Voyager\App\Request;
 use Voyager\Facade\Cache;
+use Voyager\Facade\Str;
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Reader;
@@ -100,11 +101,22 @@ class Kernel
             {
                 $list->push($route->{$alias});
             }
+            else if(Str::startWith($alias, 'App\Middleware'))
+            {
+                $list->push($alias);
+            }
         }
 
         if($groups->has($this->route->middleware))
         {
             $list->merge($groups->{$this->route->middleware});
+        }
+        else
+        {
+            if($route->has($this->route->middleware))
+            {
+                $list->push($route->{$this->route->middleware});
+            }
         }
 
         $list->unique();
@@ -112,25 +124,40 @@ class Kernel
 
         if(!$list->empty())
         {
+            $middlewares = static::$middlewares['middlewares'];
+            $queue = [];
+
+            foreach($list->get() as $value)
+            {
+                if(!Str::startWith($value, 'App\Middleware'))
+                {
+                    $queue[] = $middlewares[$value];
+                }
+                else
+                {
+                    $queue[] = $value;
+                }
+            }
+
             require path('system/Http/Middleware/helper.php');
 
             $index = app()->index;
             $request = new Request($this->route->toArray());
-            $middleware = $list->get($index);
+            $middleware = $queue[$index];
             $instance = new $middleware($request);
             $instance->test();
 
-            while(app()->index < $list->length() && !app()->bypass && app()->proceed)
+            while(app()->index < sizeof($queue) && !app()->bypass && app()->proceed)
             {
                 app()->proceed = false;
                 $index = app()->index;
 
-                $middleware = $list->get($index);
+                $middleware = $queue[$index];
                 $instance = new $middleware($request);
                 $instance->test();
             }
 
-            if(app()->index !== $list->length() && !app()->bypass)
+            if(app()->index !== sizeof($queue) && !app()->bypass)
             {
                 abort(500);
             }
