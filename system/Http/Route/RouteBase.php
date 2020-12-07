@@ -319,7 +319,7 @@ abstract class RouteBase
      * @return  $this
      */
 
-    public function accessibleBy(string $datetime)
+    public function opens(string $datetime)
     {
         $this->middlewares->push('accessibility');
         return $this->set('accessibility', $datetime);
@@ -332,7 +332,7 @@ abstract class RouteBase
      * @return  $this
      */
 
-    public function expiration(string $datetime)
+    public function closes(string $datetime)
     {
         $this->middlewares->push('accessibility');
         return $this->set('expiration', $datetime);
