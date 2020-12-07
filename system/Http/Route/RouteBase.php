@@ -105,19 +105,49 @@ abstract class RouteBase
     }
 
     /**
-     * Set route method.
+     * Set route controller class.
+     * 
+     * @param   string $controller
+     * @return  $this
+     */
+
+    public function controller(string $controller)
+    {
+        return $this->set('controller', $controller);
+    }
+
+    /**
+     * Set route controller method.
+     * 
+     * @param   string $method
+     * @return  $this
+     */
+
+    public function method(string $method)
+    {
+        return $this->set('method', $method);
+    }
+
+    /**
+     * Set route request method or http verbs.
      * 
      * @param   mixed $verbs
      * @return  $this
      */
 
-    public function methods($verbs)
+    public function verb($verbs)
     {
         $data = new Arr();
 
         if(is_string($verbs))
         {
-            $data->push($verbs);
+            foreach(explode(',', $verbs) as $value)
+            {
+                if($value !== '')
+                {
+                    $data->push($value);
+                }
+            }
         }
         else if(is_array($verbs))
         {
@@ -140,21 +170,6 @@ abstract class RouteBase
     }
 
     /**
-     * Set to maintenance mode.
-     * 
-     * @param   string $mode
-     * @return  $this
-     */
-
-    public function mode(string $mode)
-    {
-        if(in_array($mode, ['up', 'down']))
-        {
-            return $this->set('mode', $mode);
-        }
-    }
-
-    /**
      * Set maintenance mode off.
      * 
      * @return $this
@@ -162,7 +177,7 @@ abstract class RouteBase
 
     public function up()
     {
-        return $this->mode('up');
+        return $this->set('mode', 'up');
     }
 
     /**
@@ -173,7 +188,7 @@ abstract class RouteBase
 
     public function down()
     {
-        return $this->mode('down');
+        return $this->set('mode', 'down');
     }
 
     /**
@@ -256,7 +271,7 @@ abstract class RouteBase
     }
 
     /**
-     * Require request through ajax.
+     * Require request through ajax or XMLHttpRequest.
      * 
      * @param   bool $ajax
      * @param   
@@ -434,7 +449,13 @@ abstract class RouteBase
 
         if(is_string($countries))
         {
-            $countries = [$countries];
+            foreach(explode(',', $countries) as $country)
+            {
+                if($country !== '')
+                {
+                    $countries[] = $country;
+                }
+            }
         }
 
         return $this->set('location', $countries);

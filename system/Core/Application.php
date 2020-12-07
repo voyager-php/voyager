@@ -5,6 +5,7 @@ namespace Voyager\Core;
 use Closure;
 use Voyager\Facade\Cache;
 use Voyager\Facade\Request;
+use Voyager\Facade\Str;
 use Voyager\Http\Middleware\Kernel;
 use Voyager\Http\Response;
 use Voyager\Http\Route\Router;
@@ -302,7 +303,13 @@ class Application
 
             new Kernel($this->route);
 
-            $controller = 'App\Controller\\' . str_replace('.', '\\', $this->route->controller);
+            $controller = $this->route->controller;
+
+            if(!Str::startWith($controller, 'App\Controller'))
+            {
+                $controller = 'App\Controller\\' . str_replace('.', '\\', $controller);
+            }
+
             $instance = new $controller($this->route);
             $response = $instance->getResponse();
 

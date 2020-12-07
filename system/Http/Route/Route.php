@@ -60,7 +60,7 @@ class Route extends RouteBase
                 }
                 else if($key === 'verb')
                 {
-                    $this->methods($value);
+                    $this->verb($value);
                 }
             }
         }
@@ -75,10 +75,18 @@ class Route extends RouteBase
             $uri = static::$prefix . $uri;
         }
 
-        $this->methods($verb);
+        $this->verb($verb);
         $this->set('uri', $uri);
-        $this->set('controller', Str::break($arg, '@')[0]);
-        $this->set('method', Str::break($arg, '@')[1]);
+
+        if(Str::has($arg, '@'))
+        {
+            $this->set('controller', Str::break($arg, '@')[0]);
+            $this->set('method', Str::break($arg, '@')[1]);
+        }
+        else
+        {
+            $this->set('method', $arg);
+        }
     }
 
     /**
@@ -89,7 +97,7 @@ class Route extends RouteBase
      * @return  mixed $arg
      */
 
-    public static function request($verbs, string $uri, $arg)
+    public static function request($verbs, string $uri, $arg = 'index')
     {
         if($verbs === '*')
         {
@@ -106,7 +114,7 @@ class Route extends RouteBase
      * @param   mixed $arg
      */
 
-    public static function any(string $uri, $arg)
+    public static function any(string $uri, $arg = 'index')
     {
         return static::request('*', $uri, $arg);
     }
@@ -138,7 +146,7 @@ class Route extends RouteBase
      * @return  $this
      */
 
-    public static function get(string $uri, $arg)
+    public static function get(string $uri, string $arg = 'index')
     {
         return static::add(new self('get', $uri, $arg));
     }
@@ -151,7 +159,7 @@ class Route extends RouteBase
      * @return  $this
      */
 
-    public static function post(string $uri, string $arg)
+    public static function post(string $uri, string $arg = 'index')
     {
         return static::add(new self('post', $uri, $arg));
     }
@@ -164,7 +172,7 @@ class Route extends RouteBase
      * @return  $this
      */
 
-    public static function put(string $uri, string $arg)
+    public static function put(string $uri, string $arg = 'index')
     {
         return static::add(new self('put', $uri, $arg));
     }
@@ -177,7 +185,7 @@ class Route extends RouteBase
      * @return  $this
      */
 
-    public static function patch(string $uri, string $arg)
+    public static function patch(string $uri, string $arg = 'index')
     {
         return static::add(new self('patch', $uri, $arg));
     }
@@ -190,7 +198,7 @@ class Route extends RouteBase
      * @return  $this
      */
 
-    public static function delete(string $uri, string $arg)
+    public static function delete(string $uri, string $arg = 'index')
     {
         return static::add(new self('delete', $uri, $arg));
     }
