@@ -1,6 +1,8 @@
 # Voyager Framework
 
-Voyager is a fast, lightweight and open-source web application framework that provides foundation to kick-start your development. It also provides you beautiful code without slowing down your application.
+![](https://img.shields.io/badge/packagist-v1.0.7-informational?style=flat&logo=<LOGO_NAME>&logoColor=white&color=2bbc8a) ![](https://img.shields.io/badge/license-MIT-informational?style=flat&logo=<LOGO_NAME>&logoColor=white&color=2bbc8a)
+
+Voyager is a fast, lightweight and open-source web application framework that provides you foundation to kick-start your web development.
 
 
 **Includes**
@@ -16,15 +18,17 @@ Voyager is a fast, lightweight and open-source web application framework that pr
 10. Built-in CSS Utility
 
 
-**Installation**
+**Installation using composer**
 
-1. Create new project by using composer *"composer create-project jameslevi/voyager=v1.0.6 ."* command and wait for composer to download and install your fresh voyager project.
+1. Create new project by using composer *"composer create-project jameslevi/voyager=v1.0.7 ."* command and wait for composer to download and install your fresh voyager project.
 2. Using your terminal, run the atmos command *"php atmos --init"* to generate your .env file and API key for your project.
 3. Serve your project using the *"php atmos serve:80"* command to start PHP built-in server in localhost at port 80.
 4. Run the command *"php atmos project:debug"* to start your development.
-5. Using the "php atmos -h" to show more atmos commands.
 
+**Security Vulnerabilities**
 
-**Release**
+If you discover some security issues or bugs that can cause security vulnerabilities, please email James Crisostomo via nerdlabenterprise@gmail.com. 
 
-Voyager Framework is still in beta version.
+**License**
+
+This framework is an open-sourced software licensed under [MIT](https://opensource.org/licenses/MIT) License.
