@@ -60,6 +60,7 @@ abstract class RouteBase
             'middlewares'           => [],
             'timezone'              => null,
             'locale'                => null,
+            'backup_locale'         => null,
             'csrf'                  => false,
             'authentication'        => false,
             'cors'                  => false,
@@ -207,11 +208,17 @@ abstract class RouteBase
      * Set locale translation.
      * 
      * @param   string $locale
+     * @param   string $backup
      * @return  $this
      */
 
-    public function locale(string $locale)
+    public function locale(string $locale, string $backup = null)
     {
+        if(!is_null($backup))
+        {
+            $this->set('backup_locale', $backup);
+        }
+
         return $this->set('locale', $locale);
     }
 

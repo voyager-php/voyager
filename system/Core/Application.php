@@ -294,6 +294,11 @@ class Application
                 }
             }
 
+            if(!is_null($this->route->backup_locale))
+            {
+                $this->backup_locale = $this->route->backup_locale;
+            }
+
             if(!is_null($this->route->cache))
             {
                 $this->cache = $this->route->cache;
@@ -391,6 +396,7 @@ class Application
         $this->index            = 0;
         $this->bypass           = false;
         $this->locale           = env('APP_LOCALE');
+        $this->backup_locale    = env('APP_BACKUP_LOCALE');
         $this->cache            = env('APP_CACHE');
         $this->limit            = env('APP_TIME_LIMIT');
         $this->timezone         = env('APP_TIMEZONE');

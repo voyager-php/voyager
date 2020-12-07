@@ -128,7 +128,7 @@ class Lang extends Translations
     public function get(string $lang = 'en', array $replace = [])
     {
         $id = $this->id;
-        $backup = env('APP_BACKUP_LOCALE');
+        $backup = app()->backup_locale;
         $response = $this->getTranslation($id, $lang);
 
         if($response === $id && !is_null($backup))
