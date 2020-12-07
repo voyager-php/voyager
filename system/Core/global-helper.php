@@ -8,6 +8,7 @@
     use Voyager\Resource\Locale\Lang;
     use Voyager\UI\View\TemplateEngine;
     use Voyager\Util\Data\Collection;
+    use Voyager\Util\File\Reader;
     use Voyager\Util\Http\Session;
     use Voyager\Util\Str as Builder;
 
@@ -408,6 +409,26 @@
         {
             $view = new TemplateEngine($path, $emit);
             return $view->output();
+        }
+    }
+
+    /**
+     * Return raw html string.
+     * 
+     * @param   string $path
+     * @return  string
+     */
+
+    if(!function_exists('html'))
+    {
+        function html(string $path)
+        {
+            $file = new Reader($path);
+
+            if($file->exist() && $file->is('html'))
+            {
+                return $file->content();
+            }
         }
     }
 
