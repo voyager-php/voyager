@@ -302,7 +302,7 @@
             $str->append('://');
             $str->append(Str::moveFromEnd(strtolower(env('APP_URL')), '/'));
 
-            if(Request::port() !== 80)
+            if((int)Request::port() !== 80)
             {
                 $str->append(':' . Request::port());
             }

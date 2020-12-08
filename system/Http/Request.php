@@ -63,6 +63,24 @@ class Request
     }
 
     /**
+     * Return the base url.
+     * 
+     * @return  string
+     */
+
+    public function baseURL()
+    {
+        $url = ($this->https() ? 'https' : 'http') . '://' . parse_url($this->url(), PHP_URL_HOST);
+
+        if((int)$this->port() !== 80)
+        {
+            $url .= ':' . $this->port();
+        }
+
+        return $url . '/';
+    }
+
+    /**
      * Return the URI from the request.
      * 
      * @return  string
