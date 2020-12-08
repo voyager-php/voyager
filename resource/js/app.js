@@ -50,7 +50,10 @@
 
     voyager.setProperty = function(key, value) 
     {
-        return defineProperty(key, value);
+        if(!objectHasKey(voyager, key))
+        {
+            defineProperty(key, value);
+        }
     };
 
     voyager.each = function(array, callback) 
@@ -111,12 +114,11 @@
         return null;
     };
 
-    voyager.url = function(uri, param = null) 
+    voyager.url = function(uri, param = null, csrf = false) 
     {
-        var builder = voyager.https ? 'https' : 'http';
-            builder += '://' + voyager.base_url + '/';
+        var url = voyager.base_url;
 
-        if(startWith(uri, '/') && uri !== '/') 
+        if(startWith(uri, '/') && uri !== '/')
         {
             uri = uri.substring(1, uri.length);
         }
@@ -126,7 +128,22 @@
             uri = uri.substring(0, uri.length - 1);
         }
 
-        builder += uri;
+        if(endWith(url, '/') && uri === '/')
+        {
+            url = url.substring(0, url.length - 1);
+        }
+
+        url += uri;
+
+        if(csrf)
+        {
+            if(isNull(param))
+            {
+                param = {};
+            }
+
+            param['_token'] = voyager.token;
+        }
 
         if(!isNull(param))
         {
@@ -134,37 +151,38 @@
 
             if(keys.length !== 0) 
             {
-                builder += '?';
+                url += '?';
                 
                 voyager.each(keys, function(key) 
                 {
-                    builder += key + '=' + encodeURIComponent(param[key]) + '&';
+                    url += key + '=' + encodeURIComponent(param[key]) + '&';
                 });
 
-                builder = builder.substring(0, builder.length - 1);
+                url = url.substring(0, url.length - 1);
             }
         }
 
-        return builder;
+        return url;
     };
 
     voyager.lang = function(id, lang = null, replace = null) {
         var translations = voyager.translations,
-            lang = isNull(lang) ? voyager.locale : 'en',
+            lang = isNull(lang) ? voyager.locale : lang,
+            backup = voyager.backup_locale,
             name = id.split('@')[0].replace(/\./g, '_'),
             response = id,
             location = id.split('@')[1] || null,
             locales = {},
             that = this;
 
+        that.each(Object.keys(translations), function(key) {
+            that.each(Object.keys(translations[key]), function(item) {
+                locales[item] = translations[key][item];
+            });
+        });
+
         if(isNull(location))
         {
-            that.each(Object.keys(translations), function(key) {
-                that.each(Object.keys(translations[key]), function(item) {
-                    locales[item] = translations[key][item];
-                });
-            });
-            
             if(objectHasKey(locales, name))
             {
                 var data = locales[name];
@@ -193,6 +211,39 @@
             }
         }
 
+        if(response === id)
+        {
+            if(isNull(location))
+            {
+                if(objectHasKey(locales, name))
+                {
+                    var data = locales[name];
+
+                    if(objectHasKey(data, backup))
+                    {
+                        response = data[backup];
+                    }
+                }
+            }
+            else
+            {
+                if(objectHasKey(translations, location))
+                {
+                    locales = translations[location];
+
+                    if(objectHasKey(locales, name))
+                    {
+                        var data = locales[name];
+
+                        if(objectHasKey(data, backup))
+                        {
+                            response = data[backup];
+                        }
+                    }
+                }
+            }
+        }
+
         if(!isNull(replace))
         {
             var string = response;
@@ -207,6 +258,16 @@
         {
             return response;
         }
+    };
+
+    voyager.redirect = function(uri, param = null)
+    {
+        window.location.href = voyager.url(uri, param);
+    };
+
+    voyager.goHome = function()
+    {
+        voyager.redirect('/');
     };
 
     voyager.reload = function() 

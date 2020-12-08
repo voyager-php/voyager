@@ -66,8 +66,9 @@ class ScriptResourceProvider
     private static function addDotenvData()
     {
         static::addScript('voyager.setProperty(\'version\',\'' . app()->version() . '\');');
-        static::addScript('voyager.setProperty(\'base_url\',\'' . env('APP_URL') . '\');');
         static::addScript('voyager.setProperty(\'locale\',\'' . env('APP_LOCALE') . '\');');
+        static::addScript('voyager.setProperty(\'backup_locale\', \'' . env('APP_BACKUP_LOCALE') . '\');');
+        static::addScript('voyager.setProperty(\'app_url\',\'' . env('APP_URL') . '\');');
         static::addScript('voyager.setProperty(\'app_name\',\'' . env('INFO_NAME') . '\');');
         static::addScript('voyager.setProperty(\'app_description\',\'' . env('INFO_DESCRIPTION') . '\');');
         static::addScript('voyager.setProperty(\'app_version\',\'' . env('INFO_VERSION') . '\');');
@@ -82,8 +83,8 @@ class ScriptResourceProvider
     private static function addRequestData()
     {
         static::addScript('voyager.setProperty(\'current_url\',\'' . addslashes(Request::url()) . '\');');
+        static::addScript('voyager.setProperty(\'base_url\', \'' . Request::baseURL() . '\');');
         static::addScript('voyager.setProperty(\'uri\',\'' . Request::uri() . '\');');
-        static::addScript('voyager.setProperty(\'https\',' . (Request::https() ? 'true' : 'false') . ');');
     }
 
     /**
