@@ -140,12 +140,7 @@ class Response
     {
         if(env('APP_COMPRESS'))
         {
-            $string = str_replace(['\r', '\n'], ' ', trim($this->output));
-            $string = preg_replace('!\s+!', ' ', $string);
-            $string = str_replace('> ', '>', $string);
-            $string = str_replace(' <', '<', $string);
-
-            return $string;
+            return preg_replace('!\s+!', ' ', str_replace(['\r', '\n'], ' ', trim($this->output)));
         }
         else
         {
