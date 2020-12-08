@@ -392,18 +392,46 @@ abstract class RouteBase
     /**
      * Grant permission to users.
      * 
-     * @param   string $user_type
+     * @param   mixed $type
      * @return  $this
      */
 
-    public function permission(string $user_type)
+    public function permission($type)
     {
         $config = AuthConfig::get('users');
         $pool = $this->data->get('permission');
 
-        if(array_key_exists($user_type, $config))
+        if(is_string($type))
         {
-            $pool[] = $config[$user_type];
+            if(array_key_exists($type, $config))
+            {
+                $key = $config[$type];
+
+                if(!in_array($key, $pool))
+                {
+                    $pool[] = $key;
+                }
+            }
+        }
+        else if(is_array($type))
+        {
+            foreach($type as $item)
+            {
+                if(array_key_exists($item, $config))
+                {
+                    $key = $config[$item];
+
+                    if(!in_array($key, $pool))
+                    {
+                        $pool[] = $key;
+                    }
+                }
+            }
+        }
+
+        if(!empty($pool))
+        {
+            $this->middlewares->push('permission');
         }
 
         return $this->set('permission', $pool);
@@ -421,12 +449,12 @@ abstract class RouteBase
     }
 
     /**
-     * Grant permission to subadmin only.
+     * Grant permission to admin only.
      * 
      * @return  $this
      */
 
-    public function subadmin()
+    public function admin()
     {
         return $this->permission('admin');
     }

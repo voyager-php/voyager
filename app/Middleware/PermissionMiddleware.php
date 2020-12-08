@@ -19,19 +19,9 @@ class PermissionMiddleware extends Middleware
     {
         $permission = $request->route('permission');
 
-        if(Auth::authenticated())
+        if(!empty($permission) && !in_array(Auth::type(), $permission))
         {
-            if(!empty($permission) && !in_array(Auth::type(), $permission))
-            {
-                abort(403);
-            }
-        }
-        else
-        {
-            if(Auth::type() !== 3 && !empty($permission))
-            {
-                abort(403);
-            }
+            abort(403);
         }
     }
 }

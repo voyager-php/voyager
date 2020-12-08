@@ -13,9 +13,8 @@ return [
         \App\Middleware\RequestMethodMiddleware::class,
         \App\Middleware\ErrorLimiterMiddleware::class,
         \App\Middleware\RateLimiterMiddleware::class,
-        \App\Middleware\HttpsRedirectionMiddleware::class,
+        // \App\Middleware\HttpsRedirectionMiddleware::class,
         \App\Middleware\AuthenticationMiddleware::class,
-        \App\Middleware\PermissionMiddleware::class,
     ],
 
     /**
@@ -50,6 +49,7 @@ return [
         'validation'        => \App\Middleware\ValidationMiddleware::class,
         'accessibility'     => \App\Middleware\RouteAccessibilityMiddleware::class,
         'location'          => \App\Middleware\BlockLocationMiddleware::class,
+        'permission'        => \App\Middleware\PermissionMiddleware::class,
     ],
 
 ];
