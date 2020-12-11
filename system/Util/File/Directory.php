@@ -206,7 +206,14 @@ class Directory
 
     public function make(string $filename, string $data)
     {
-        return File::make($this->path . $filename, $data);
+        $reader = new Reader($this->path . $filename, $data);
+
+        if(!$reader->exist())
+        {
+            $reader->make($data);
+        }
+
+        return $reader;
     }
 
 }
