@@ -233,7 +233,7 @@ abstract class RouteBase
     }
 
     /**
-     * Enable CSRF authentication.
+     * Enable CSRF validation.
      * 
      * @param   bool $csrf
      * @return  $this
@@ -246,7 +246,7 @@ abstract class RouteBase
     }
 
     /**
-     * Enable user authentication.
+     * Require user authentication.
      * 
      * @param   bool $auth
      * @return  $this
@@ -260,31 +260,31 @@ abstract class RouteBase
     /**
      * Enable cross-origin request.
      * 
-     * @param   bool $cors
+     * @param   bool $enable
      * @return  $this
      */
 
-    public function cors(bool $cors = true)
+    public function cors(bool $enable = true)
     {
         $this->middlewares->push('cors');
-        return $this->set('cors', $cors);
+        return $this->set('cors', $enable);
     }
 
     /**
-     * Enable IP address checking in middleware.
+     * Enable IP address validation in middleware.
      * 
-     * @param   bool $ip
+     * @param   bool $enable
      * @return  $this
      */
 
-    public function checkIP(bool $ip = true)
+    public function validateIP(bool $enable = true)
     {
-        if($ip)
+        if($enable)
         {
             $this->middlewares->push('ip');
         }
 
-        return $this->set('ip', $ip);
+        return $this->set('ip', $enable);
     }
 
     /**
