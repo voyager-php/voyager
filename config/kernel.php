@@ -9,7 +9,6 @@ return [
      */
 
     'bootstrap' => [
-        \App\Middleware\MaintenanceModeMiddleware::class,
         \App\Middleware\RequestMethodMiddleware::class,
         \App\Middleware\ErrorLimiterMiddleware::class,
         \App\Middleware\RateLimiterMiddleware::class,

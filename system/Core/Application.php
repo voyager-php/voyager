@@ -287,6 +287,11 @@ class Application
                 }
             }
 
+            if(strtolower(env('APP_MODE')) === 'down' || strtolower($this->route->mode) === 'down')
+            {
+                abort(503);
+            }
+
             if(!is_null($this->route->redirect))
             {
                 $destination = $this->route->redirect;
