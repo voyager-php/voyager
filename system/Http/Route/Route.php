@@ -55,6 +55,13 @@ class Route extends RouteBase
                     {
                         $this->middlewares->push($this->middleware_keys[$key]);
                     }
+                    else if($key === 'middlewares')
+                    {
+                        foreach($value as $middleware)
+                        {
+                            $this->middlewares->push($middleware);
+                        }
+                    }
 
                     $this->set($key, $value);
                 }
