@@ -4,7 +4,6 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
-use Voyager\Facade\Str;
 
 class MaintenanceModeMiddleware extends Middleware
 {
@@ -17,10 +16,7 @@ class MaintenanceModeMiddleware extends Middleware
 
     protected function handle(Request $request)
     {
-        if(Str::equal('down', [
-            Str::toLower(env('APP_MODE')),
-            Str::toLower($request->route('mode'))
-        ]))
+        if(strtolower(env('APP_MODE')) === 'down' || strtolower($request->route('mode')) === 'down')
         {
             abort(503);
         }

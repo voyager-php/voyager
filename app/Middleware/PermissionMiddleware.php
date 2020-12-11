@@ -4,7 +4,7 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
-use Voyager\Facade\Auth;
+use Voyager\Http\Security\Authentication;
 
 class PermissionMiddleware extends Middleware
 {
@@ -18,8 +18,9 @@ class PermissionMiddleware extends Middleware
     protected function handle(Request $request)
     {
         $permission = $request->route('permission');
+        $auth = new Authentication();
 
-        if(!empty($permission) && !in_array(Auth::type(), $permission))
+        if(!empty($permission) && !in_array($auth->type(), $permission))
         {
             abort(403);
         }
