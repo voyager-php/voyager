@@ -46,7 +46,7 @@ class Lang extends Translations
         
         if(Str::has($id, '@'))
         {
-            $reader = new Reader('resource/local/' . $break[1] . '.php');
+            $reader = new Reader('resource/locale/' . $break[1] . '.php');
 
             if($reader->exist())
             {
@@ -55,7 +55,7 @@ class Lang extends Translations
             }
             else
             {
-                $this->id = $id;
+                $this->id = $break[0];
             }
         }
         else
