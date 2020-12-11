@@ -2,7 +2,6 @@
 
 namespace Voyager\UI\View;
 
-use Voyager\Facade\Request;
 use Voyager\Facade\Str;
 use Voyager\Resource\Locale\Lang;
 use Voyager\Util\Arr;
@@ -82,9 +81,11 @@ class ScriptResourceProvider
 
     private static function addRequestData()
     {
-        static::addScript('voyager.setProperty(\'current_url\',\'' . addslashes(Request::url()) . '\');');
-        static::addScript('voyager.setProperty(\'base_url\', \'' . Request::baseURL() . '\');');
-        static::addScript('voyager.setProperty(\'uri\',\'' . Request::uri() . '\');');
+        $request = app()->request();
+
+        static::addScript('voyager.setProperty(\'current_url\',\'' . addslashes($request->url()) . '\');');
+        static::addScript('voyager.setProperty(\'base_url\', \'' . addslashes($request->baseURL()) . '\');');
+        static::addScript('voyager.setProperty(\'uri\',\'' . addslashes($request->uri()) . '\');');
     }
 
     /**

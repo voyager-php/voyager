@@ -2,7 +2,6 @@
 
 namespace Voyager\UI\Monsoon;
 
-use Voyager\Facade\Cache;
 use Voyager\Facade\Str;
 use Voyager\UI\View\TemplateEngine;
 use Voyager\Util\Arr;
@@ -60,7 +59,7 @@ class CSSUtility
     {
         static::$classes = new Arr();
         static::load();
-        static::$config = Config::get();
+        static::$config = cache('monsoon') ?? Config::get();
 
         $classes = new Arr();
         $mediaqueries = new Arr();
@@ -78,7 +77,6 @@ class CSSUtility
 
                 foreach($split as $util)
                 {
-                    $important = Str::endWith($util, '!');
                     $negative = Str::startWith($util, '-');
                     $util = Str::moveFromStart(Str::moveFromEnd($util, '!'), '-');
                     $pseudo = Str::break($util, ':')[0];
@@ -328,7 +326,7 @@ class CSSUtility
 
     private static function load()
     {
-        $cache = Cache::get('css-utilities');
+        $cache = cache('css-utilities');
 
         if(is_null($cache))
         {
@@ -344,7 +342,7 @@ class CSSUtility
                 }
             }
 
-            Cache::store('css-utilities', static::$classes->get());
+            cache('css-utilities', static::$classes->get());
         }
         else
         {

@@ -103,6 +103,11 @@ class Parser
 
     private function replaceAllCallable(string $html)
     {
+        if(!Str::has($html, '[####'))
+        {
+            return $html;
+        }
+
         $str = new Builder();
         foreach(explode('[#### ', $html) as $segment)
         {
@@ -230,6 +235,11 @@ class Parser
 
     private function replaceTemplates(string $html)
     {
+        if(!Str::has($html, '{{'))
+        {
+            return $html;
+        }
+
         $str = new Builder();
 
         foreach(explode('{{', $html) as $segment)
@@ -271,6 +281,11 @@ class Parser
 
     private function replaceIncludes(string $html)
     {   
+        if(!Str::has($html, '@include'))
+        {
+            return $html;
+        }
+
         $str = new Builder();
         
         foreach(explode('@include', $html) as $segment)
@@ -323,6 +338,11 @@ class Parser
 
     private function replaceFunctions(string $html)
     {
+        if(!Str::has($html, '@'))
+        {
+            return $html;
+        }
+
         Directives::get();
         $str = new Builder();
 
@@ -366,6 +386,11 @@ class Parser
 
     private function replaceDirectives(string $html)
     {
+        if(!Str::has($html, '@'))
+        {
+            return $html;
+        }
+
         $directives = static::$directives;
         $str = new Builder();
 
@@ -406,6 +431,11 @@ class Parser
 
     private function replaceEndScopes(string $html)
     {
+        if(!Str::has($html, '@'))
+        {
+            return $html;
+        }
+
         $str = new Builder();
         
         foreach(explode('@', $html) as $segment)
@@ -584,6 +614,11 @@ class Parser
 
     public function removeTemplateComments(string $html)
     {
+        if(!Str::has($html, '{{--') || !Str::has($html, '--}}'))
+        {
+            return $html;
+        }
+
         $str = new Builder();
         
         foreach(explode('{{--', $html) as $segment)
@@ -620,6 +655,11 @@ class Parser
 
     private function removeNativeComments(string $html)
     {
+        if(!Str::has($html, '<!--') || !Str::has($html, '-->'))
+        {
+            return $html;
+        }
+
         $str = new Builder();
 
         if(Str::has($html, '<!--') && Str::has($html, '-->'))

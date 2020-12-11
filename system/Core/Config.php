@@ -2,8 +2,6 @@
 
 namespace Voyager\Core;
 
-use Voyager\Facade\Cache;
-use Voyager\Facade\File;
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Reader;
@@ -16,7 +14,7 @@ abstract class Config
      * @var \Voyager\Util\Arr
      */
 
-    private static $cache;
+    private static $data;
 
     /**
      * Cache key.
@@ -35,6 +33,14 @@ abstract class Config
     private $file;
 
     /**
+     * Store cache object.
+     * 
+     * @var \Voyager\Core\Cache
+     */
+
+    private $cache;
+
+    /**
      * Create new config data.
      * 
      * @param   string $file
@@ -44,8 +50,9 @@ abstract class Config
 
     public function __construct(string $key, string $file)
     {
-        $this->key  = $key;
-        $this->file = $file;
+        $this->key              = $key;
+        $this->file             = $file;
+        $this->cache            = new Cache($key);
     }
 
     /**
@@ -68,18 +75,18 @@ abstract class Config
 
     public function read()
     {
-        if(Cache::exist($this->key))
+        if($this->cache->exist())
         {
-            return Cache::get($this->key);
+            return cache($this->key);
         }
         else
         {
-            if(File::exist($this->file))
+            $file = new Reader($this->file);
+
+            if($file->exist())
             {
-                if(!static::$cache->hasKey($this->key))
+                if(!static::$data->hasKey($this->key))
                 {
-                    $file = new Reader($this->file);
-            
                     if($file->is('php'))
                     {
                         $data = static::send($file->require());
@@ -89,13 +96,13 @@ abstract class Config
                         $data = static::send($file->lines());
                     }
 
-                    static::$cache->set($this->key, $data);
+                    static::$data->set($this->key, $data);
 
                     return $data;
                 }
                 else
                 {
-                    return static::$cache->get($this->key);
+                    return static::$data->get($this->key);
                 }
             }
         }
@@ -110,9 +117,9 @@ abstract class Config
 
     public static function get(string $key = null)
     {
-        if(is_null(static::$cache))
+        if(is_null(static::$data))
         {
-            static::$cache = new Arr();
+            static::$data = new Arr();
         }
 
         $bind = static::bind();
@@ -120,7 +127,7 @@ abstract class Config
         
         if(function_exists('app'))
         {
-            Cache::store($bind->key(), $data);
+            cache($bind->key(), $data);
         }
 
         if(!is_null($key))

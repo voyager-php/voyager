@@ -3,7 +3,6 @@
 namespace Voyager\Http\Middleware;
 
 use Voyager\App\Request;
-use Voyager\Facade\Cache;
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
@@ -63,7 +62,7 @@ class Kernel
 
     private function loadMiddlewares()
     {
-        $cache = Cache::get('middleware');
+        $cache = cache('middleware');
         
         if(is_null($cache))
         {
@@ -72,7 +71,7 @@ class Kernel
             if($kernel->exist())
             {
                 $middlewares = $kernel->require();
-                Cache::store('middleware', $middlewares);
+                cache('middleware', $middlewares);
 
                 return $middlewares;
             }

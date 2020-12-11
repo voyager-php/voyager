@@ -1,10 +1,9 @@
 <?php
 
     use Voyager\Core\Application;
-    use Voyager\Facade\Auth;
-    use Voyager\Facade\Cache;
-    use Voyager\Facade\Request;
+    use Voyager\Core\Cache;
     use Voyager\Facade\Str;
+    use Voyager\Http\Security\Authentication;
     use Voyager\Resource\Locale\Lang;
     use Voyager\UI\View\TemplateEngine;
     use Voyager\Util\Data\Collection;
@@ -140,6 +139,20 @@
     }
 
     /**
+     * Return new instance of authentication class.
+     * 
+     * @return  \Voyager\Http\Security\Authentication
+     */
+
+    if(!function_exists('auth'))
+    {
+        function auth()
+        {
+            return new Authentication();
+        }
+    }
+
+    /**
      * Return true if user has permission.
      * 
      * @param   string $key
@@ -150,7 +163,7 @@
     {
         function permission(string $key)
         {
-            return Auth::hasPermission($key);
+            return auth()->hasPermission($key);
         }
     }
 
@@ -164,7 +177,7 @@
     {
         function user_id()
         {
-            return Auth::userId();
+            return auth()->userId();
         }
     }
 
@@ -179,7 +192,7 @@
     {
         function auth(string $key)
         {
-            return Auth::get($key);
+            return auth()->get($key);
         }
     }
 
@@ -193,7 +206,7 @@
     {
         function authenticated()
         {
-            return Auth::authenticated();
+            return auth()->authenticated();
         }
     }
 
@@ -207,7 +220,7 @@
     {
         function is_superadmin()
         {
-            return Auth::type() === 0;
+            return auth()->type() === 0;
         }
     }
 
@@ -221,7 +234,7 @@
     {
         function is_admin()
         {
-            return Auth::type() === 1;
+            return auth()->type() === 1;
         }
     }
 
@@ -235,7 +248,7 @@
     {
         function is_member()
         {
-            return Auth::type() === 2;
+            return auth()->type() === 2;
         }
     }
 
@@ -249,7 +262,7 @@
     {
         function is_guest()
         {
-            return Auth::type() === 3;
+            return auth()->type() === 3;
         }
     }
 
@@ -265,7 +278,7 @@
     {
         function get(string $key, $default = null)
         {
-            return Request::get($key, $default);
+            return app()->request()->get($key, $default);
         }
     }
 
@@ -281,7 +294,7 @@
     {
         function post(string $key, $default = null)
         {
-            return Request::post($key, $default);
+            return app()->request()->post($key, $default);
         }
     }
 
@@ -298,13 +311,14 @@
     {
         function url(string $uri, array $param = null, bool $encode = true)
         {
-            $str = new Builder(Request::https() ? 'https' : 'http');
+            $request = app()->request();
+            $str = new Builder($request->https() ? 'https' : 'http');
             $str->append('://');
             $str->append(Str::moveFromEnd(strtolower(env('APP_URL')), '/'));
 
-            if((int)Request::port() !== 80)
+            if((int)$request->port() !== 80)
             {
-                $str->append(':' . Request::port());
+                $str->append(':' . $request->port());
             }
 
             $str->append('/' . Str::moveFromBothEnds(strtolower($uri), '/'));
@@ -341,7 +355,11 @@
     {
         function dd($data)
         {
-            app()->response = $data;
+            echo'<pre>';
+            var_dump($data);
+            echo'</pre>';
+            
+            app()->response = '<br />';
             app()->terminate = true;
         }
     }
@@ -358,11 +376,12 @@
     {
         function cache(string $key, $value = null)
         {
-            $cache = Cache::get($key);
+            $instance = new Cache($key);
+            $cache = $instance->get();
 
             if(!is_null($value))
             {
-                Cache::store($key, $value);
+                $instance->store($value);
                 
                 return $value;
             }

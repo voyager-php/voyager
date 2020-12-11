@@ -2,11 +2,10 @@
 
 namespace Voyager\Resource\Locale;
 
-use Voyager\Facade\Cache;
-use Voyager\Facade\File;
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
 use Voyager\Util\File\Directory;
+use Voyager\Util\File\Reader;
 
 class Lang extends Translations
 {
@@ -44,11 +43,20 @@ class Lang extends Translations
     public function __construct(string $id)
     {
         $break = Str::break($id, '@');
-
-        if(Str::has($id, '@') && File::exist('resource/locale/' . $break[1] . '.php'))
+        
+        if(Str::has($id, '@'))
         {
-            $this->id = $break[0];
-            $this->filename = $break[1];
+            $reader = new Reader('resource/local/' . $break[1] . '.php');
+
+            if($reader->exist())
+            {
+                $this->id = $break[0];
+                $this->filename = $break[1];
+            }
+            else
+            {
+                $this->id = $id;
+            }
         }
         else
         {
@@ -69,7 +77,7 @@ class Lang extends Translations
 
     public static function load()
     {
-        $cache = Cache::get('locale');
+        $cache = cache('locale');
 
         if(!is_null(static::$cache) && is_null($cache))
         {
@@ -105,8 +113,7 @@ class Lang extends Translations
                 }
 
                 static::$cache = $data;
-
-                Cache::store('locale', $data);
+                cache('locale', $data);
             }
             
             return $data;

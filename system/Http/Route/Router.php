@@ -70,7 +70,7 @@ class Router
 
     private function loadRoutes()
     {
-        $cache = Cache::get('routes');
+        $cache = cache('routes');
         $data = new Arr();
         
         if(is_null($cache))
@@ -108,7 +108,7 @@ class Router
             }
 
             static::$cache = $data;
-            Cache::store('routes', $data);
+            cache('routes', $data);
         }
         else
         {
@@ -127,7 +127,7 @@ class Router
     public function find()
     {
         $matched = new Arr();
-        $method = strtolower(Request::method());
+        $method = strtolower(app()->request()->method());
         $uri1 = $this->uriToArray($this->uri);
         $routes = static::$cache;
         $groups = new Arr($routes->keys());

@@ -3,10 +3,9 @@
 namespace Voyager\Core;
 
 use Closure;
-use Voyager\Facade\Cache;
-use Voyager\Facade\Request;
 use Voyager\Facade\Str;
 use Voyager\Http\Middleware\Kernel;
+use Voyager\Http\Request;
 use Voyager\Http\Response;
 use Voyager\Http\Route\Router;
 use Voyager\Util\Arr;
@@ -112,13 +111,22 @@ class Application
     private $promises;
 
     /**
+     * Store http request object.
+     * 
+     * @var \Voyager\Http\Request
+     */
+
+    private $request;
+
+    /**
      * Class constructor.
      * 
      * @return void
      */
 
     public function __construct() {
-        $this->uri                      = Request::uri();
+        $this->request                  = new Request();
+        $this->uri                      = $this->request->uri();
         $this->data                     = new Arr();
         $this->promises                 = new Arr();
         $this->headers                  = new Arr();
@@ -133,6 +141,17 @@ class Application
     public function version()
     {
         return $this->version;
+    }
+
+    /**
+     * Return http request object.
+     * 
+     * @return  \Voyager\Http\Request
+     */
+
+    public function request()
+    {
+        return $this->request;
     }
 
     /**
@@ -236,7 +255,7 @@ class Application
         {
             require 'global-helper.php';
 
-            $this->env = new Collection(Env::get() ?? []);
+            $this->env = new Collection(cache('env') ?? Env::get());
             
             if($this->env->empty())
             {
@@ -245,7 +264,8 @@ class Application
 
             $this->setInitialConfigurations();
             $this->phpversion = phpversion();
-            $this->route = new Collection(Cache::get($this->uri) ?? []);
+
+            $this->route = new Collection(cache($this->uri) ?? []);
 
             if($this->route->empty())
             {
@@ -255,9 +275,9 @@ class Application
                 $uri = $this->uri;
                 
                 $this->promise('cache_route', function() use($route, $uri) {
-                    if(is_null(Cache::get($uri)) && app()->cache)
+                    if(is_null(cache($uri)) && app()->cache)
                     {
-                        Cache::store($uri, $route);
+                        cache($uri, $route);
                     }
                 });
                 
@@ -287,7 +307,8 @@ class Application
             }
             else
             {
-                $params = Request::get();
+                $params = $this->request->get();
+
                 if($params->has('_lang'))
                 {
                     $this->locale = $params->_lang;
@@ -338,7 +359,7 @@ class Application
     public function setHeaders()
     {
         http_response_code($this->code);
-        $protocol = Request::protocol();
+        $protocol = $this->request->protocol();
         
         if(!$this->success)
         {
@@ -359,9 +380,9 @@ class Application
             }
             else
             {
-                $origin = Request::origin();
+                $origin = $this->request->origin();
                 
-                if($origin !== '::1' && !Request::localhost())
+                if($origin !== '::1' && !$this->request->localhost())
                 {
                     $this->header('Access-Control-Allow-Origin', $origin);
                     $this->header('Access-Control-Allow-Credentials', 'true');

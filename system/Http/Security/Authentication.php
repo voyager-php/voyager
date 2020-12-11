@@ -3,7 +3,6 @@
 namespace Voyager\Http\Security;
 
 use Voyager\Facade\Str;
-use Voyager\Util\Data\Collection;
 use Voyager\Util\Http\Cookie;
 use Voyager\Util\Http\Session;
 
@@ -12,7 +11,7 @@ class Authentication
     /**
      * Store authentication config data.
      * 
-     * @var \Voyager\Util\Data\Collection
+     * @var array
      */
 
     private $config;
@@ -65,8 +64,8 @@ class Authentication
 
     public function __construct()
     {
-        $this->config = new Collection(AuthConfig::get());
-        $this->permissions = PermissionConfig::get();
+        $this->config = cache('authentication') ?? AuthConfig::get();
+        $this->permissions = cache('permission') ?? PermissionConfig::get();
         $this->cookie = new Cookie('remember_user');
         $this->permission = new Session('permission');
         $this->session = new Session('authentication', [
@@ -133,7 +132,7 @@ class Authentication
 
         if($remember)
         {
-            $this->cookie->set($user_id)->expire($this->config->expiration);
+            $this->cookie->set($user_id)->expire($this->config['expiration']);
         }
 
         $this->start = true;

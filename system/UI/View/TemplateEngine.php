@@ -2,11 +2,9 @@
 
 namespace Voyager\UI\View;
 
-use Voyager\Facade\Auth;
 use Voyager\Facade\Dir;
-use Voyager\Facade\File;
-use Voyager\Facade\Request;
 use Voyager\Facade\Str;
+use Voyager\Http\Security\Authentication;
 use Voyager\UI\Components\Renderer;
 use Voyager\UI\Monsoon\Config;
 use Voyager\UI\Monsoon\CSSUtility;
@@ -99,7 +97,7 @@ class TemplateEngine
 
     public function __construct(string $content, array $emit = [])
     {
-        $this->uri = Request::uri();
+        $this->uri = app()->request()->uri();
         $this->content = $content;
         $this->emit = new Arr($emit);
 
@@ -149,7 +147,9 @@ class TemplateEngine
                     $html = Renderer::start($html);
                 }
 
-                if(Config::get('enable'))
+                $config = cache('monsoon') ?? Config::get();
+
+                if($config['enable'])
                 {
                     $html = CSSUtility::extract($html);
                 }
@@ -226,7 +226,8 @@ class TemplateEngine
             $ext = '.css';
             $path = 'public/css/static/';
             $break = Str::break($html, '</head>');
-            $exist = File::exist($path . $hash . $ext);
+            $file = new Reader($path . $hash . $ext);
+            $exist = $file->exist();
 
             if(!$exist || !app()->cache)
             {
@@ -244,7 +245,7 @@ class TemplateEngine
                         ->makeFolder('static');
                 }
 
-                File::delete($path . $hash . $ext);
+                $file->delete();
                 
                 $source = static::$styles->reverse()->join();
                 
@@ -268,7 +269,8 @@ class TemplateEngine
             $ext = '.js';
             $path = 'public/js/static/';
             $break = Str::break($html, '</body>');
-            $exist = File::exist($path . $hash . $ext);
+            $file = new Reader($path . $hash . $ext);
+            $exist = $file->exist();
 
             if(!$exist || !app()->cache)
             {
@@ -288,7 +290,7 @@ class TemplateEngine
                         ->makeFolder('static');
                 }
 
-                File::delete($path . $hash . $ext);
+                $file->delete();
 
                 $source = static::$script->reverse()->join();
 
@@ -304,18 +306,19 @@ class TemplateEngine
             if($exist)
             {
                 $builder = new Builder('const app={');
+                $auth = new Authentication();
 
-                $builder->append('authenticated: ' . (Auth::authenticated() ? 'true' : 'false') . ',');
-                $builder->append('authID: "' . Auth::id() . '",');
-                $builder->append('authType: ' . Auth::type() . ',');
-                $builder->append('authUserId: "' . Auth::userId() . '",');
+                $builder->append('authenticated: ' . ($auth->authenticated() ? 'true' : 'false') . ',');
+                $builder->append('authID: "' . $auth->id() . '",');
+                $builder->append('authType: ' . $auth->type() . ',');
+                $builder->append('authUserId: "' . $auth->userId() . '",');
 
                 $builder->append('get: function(){return JSON.parse("')
-                        ->append(addslashes(Request::get()->toJson()))
+                        ->append(addslashes(app()->request()->get()->toJson()))
                         ->append('");},');
 
                 $builder->append('post: function(){return JSON.parse("')
-                        ->append(addslashes(Request::post()->toJson()))
+                        ->append(addslashes(app()->request()->post()->toJson()))
                         ->append('");},');
 
                 $builder->append('resource: function(){return JSON.parse("')
