@@ -9,6 +9,14 @@ use Voyager\Util\Arr;
 abstract class RouteBase
 {
     /**
+     * Set to true if parent class is setting.
+     * 
+     * @var bool
+     */
+
+    protected $is_setting = false;
+
+    /**
      * Store route data.
      * 
      * @var \Voyager\Util\Arr
@@ -170,6 +178,11 @@ abstract class RouteBase
     {
         if(Str::startWith($middleware, 'App\Middleware'))
         {
+            if($this->is_setting)
+            {
+                $this->middlewares->truncate();
+            }
+
             $this->middlewares->push($middleware);
 
             return $this;

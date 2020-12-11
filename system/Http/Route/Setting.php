@@ -12,5 +12,6 @@ class Setting extends RouteBase
 
     public function __construct() {
         $this->setRouteData();
+        $this->is_setting = true;
     }
 }
