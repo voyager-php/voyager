@@ -4,7 +4,6 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
-use Voyager\Facade\Cache;
 use Voyager\Facade\Str;
 use Voyager\Util\File\Reader;
 
@@ -50,7 +49,7 @@ class CrossOriginMiddleware extends Middleware
 
     protected function loadRequestOrigins()
     {
-        $cache = Cache::get('cross-origin');
+        $cache = cache('cross-origin');
         
         if(is_null($cache))
         {
@@ -60,14 +59,14 @@ class CrossOriginMiddleware extends Middleware
             if($file->exist())
             {
                 $list = $file->require();
-                Cache::store('cross-origin', $list);
+                cache('cross-origin', $list);
             }
 
             return $list;
         }
         else
         {
-            return $cache->toArray();
+            return $cache;
         }
     }
 
