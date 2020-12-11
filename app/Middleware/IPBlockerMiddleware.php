@@ -4,8 +4,6 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
-use Voyager\Facade\Cache;
-use Voyager\Util\Arr;
 use Voyager\Util\File\Reader;
 
 class IPBlockerMiddleware extends Middleware
@@ -27,7 +25,7 @@ class IPBlockerMiddleware extends Middleware
 
     protected function handle(Request $request)
     {
-        if($this->loadIps()->has($request->client()))
+        if(in_array($request->client(), $this->loadIps()))
         {
             abort(403);
         }
@@ -36,30 +34,29 @@ class IPBlockerMiddleware extends Middleware
     /**
      * Load and return blocked ip addresses.
      * 
-     * @return  \Voyager\Util\Arr
+     * @return  array
      */
 
     protected function loadIps()
     {
-        $cache = Cache::get('ip-address');
-        $list = new Arr();
-
+        $cache = cache('ip-address');
+        
         if(is_null($cache))
         {
             $file = new Reader($this->config_path);
-
+            $data = [];
+            
             if($file->exist())
             {
-                $list->set($file->require());
-                Cache::store('ip-address', $list->get());
+                $data = cache('ip-address', $file->require());
             }
+
+            return $data;
         }
         else
         {
-            $list->set($cache);
+            return $cache;
         }
-
-        return $list;
     }
 
 }
