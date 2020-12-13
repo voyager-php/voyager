@@ -76,13 +76,24 @@ class Cache
     public function __construct(string $key)
     {
         $this->key = Str::hash($key);
-        $this->reader = new Reader($this->path . Str::hash($this->hash) . $this->ext);
+        $this->reader = new Reader($this->filename());
 
         if(is_null(static::$collection))
         {
             static::$collection = new Arr();
             $this->load();
         }
+    }
+
+    /**
+     * Return cache filename.
+     * 
+     * @return  string
+     */
+
+    public function filename()
+    {
+        return $this->path . Str::hash($this->hash) . $this->ext;
     }
 
     /**
