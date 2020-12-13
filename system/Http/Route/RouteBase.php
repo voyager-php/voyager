@@ -163,21 +163,36 @@ abstract class RouteBase
     /**
      * Set middlewares.
      * 
-     * @param   string $middleware
+     * @param   mixed $middleware
      * @return  $this
      */
 
-    public function middleware(string $middleware)
+    public function middleware($middleware)
     {
+        $base = 'App\Middleware';
+
         foreach($this->middlewares->get() as $value)
         {
-            if(Str::startWith($value, 'App\Middleware'))
+            if(Str::startWith($value, $base))
             {
                 $this->middlewares->removeValues($value);
             }
         }
 
-        if(Str::startWith($middleware, 'App\Middleware'))
+        if(is_array($middleware))
+        {
+            foreach($middleware as $item)
+            {
+                if(Str::startWith($item, $base))
+                {
+                    $this->data->setNull('middleware');
+                    $this->middlewares->push($item);
+                }
+            }
+
+            return $this;
+        }
+        else if(is_string($middleware) && Str::startWith($middleware, $base))
         {
             $this->data->setNull('middleware');
             $this->middlewares->push($middleware);
