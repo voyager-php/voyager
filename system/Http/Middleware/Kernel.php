@@ -106,15 +106,18 @@ class Kernel
             }
         }
 
-        if($groups->has($this->route->middleware))
+        if(!is_null($this->route->middleware))
         {
-            $list->merge($groups->{$this->route->middleware});
-        }
-        else
-        {
-            if($route->has($this->route->middleware))
+            if($groups->has($this->route->middleware))
             {
-                $list->push($route->{$this->route->middleware});
+                $list->merge($groups->{$this->route->middleware});
+            }
+            else
+            {
+                if($route->has($this->route->middleware))
+                {
+                    $list->push($route->{$this->route->middleware});
+                }
             }
         }
 

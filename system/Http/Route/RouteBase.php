@@ -9,14 +9,6 @@ use Voyager\Util\Arr;
 abstract class RouteBase
 {
     /**
-     * Set to true if parent class is setting.
-     * 
-     * @var bool
-     */
-
-    protected $is_setting = false;
-
-    /**
      * Store route data.
      * 
      * @var \Voyager\Util\Arr
@@ -65,7 +57,7 @@ abstract class RouteBase
             'controller'            => null,
             'method'                => 'index',
             'mode'                  => 'up',
-            'middleware'            => 'web',
+            'middleware'            => null,
             'middlewares'           => [],
             'timezone'              => null,
             'locale'                => null,
@@ -168,7 +160,7 @@ abstract class RouteBase
     }
 
     /**
-     * Set middleware group alias.
+     * Set middlewares.
      * 
      * @param   string $middleware
      * @return  $this
@@ -176,13 +168,17 @@ abstract class RouteBase
 
     public function middleware(string $middleware)
     {
+        foreach($this->middlewares->get() as $value)
+        {
+            if(Str::startWith($value, 'App\Middleware'))
+            {
+                $this->middlewares->removeValues($value);
+            }
+        }
+
         if(Str::startWith($middleware, 'App\Middleware'))
         {
-            if($this->is_setting)
-            {
-                $this->middlewares->truncate();
-            }
-
+            $this->data->setNull('middleware');
             $this->middlewares->push($middleware);
 
             return $this;
@@ -252,10 +248,18 @@ abstract class RouteBase
      * @return  $this
      */
 
-    public function csrf(bool $csrf = true)
+    public function csrf(bool $enable = true)
     {
-        $this->middlewares->push('csrf');
-        return $this->set('csrf', $csrf);
+        if($enable)
+        {
+            $this->middlewares->push('csrf');
+        }
+        else
+        {
+            $this->middlewares->removeValues('csrf');
+        }
+
+        return $this->set('csrf', $enable);
     }
 
     /**
@@ -279,7 +283,15 @@ abstract class RouteBase
 
     public function cors(bool $enable = true)
     {
-        $this->middlewares->push('cors');
+        if($enable)
+        {
+            $this->middlewares->push('cors');
+        }
+        else
+        {
+            $this->middlewares->removeValues('cors');
+        }
+
         return $this->set('cors', $enable);
     }
 
@@ -296,6 +308,10 @@ abstract class RouteBase
         {
             $this->middlewares->push('ip');
         }
+        else
+        {
+            $this->middlewares->removeValues('ip');
+        }
 
         return $this->set('ip', $enable);
     }
@@ -307,10 +323,18 @@ abstract class RouteBase
      * @param   
      */
 
-    public function ajax(bool $ajax = true)
+    public function ajax(bool $enable = true)
     {
-        $this->middlewares->push('ajax');
-        return $this->set('ajax', $ajax);
+        if($enable)
+        {
+            $this->middlewares->push('ajax');
+        }
+        else
+        {
+            $this->middlewares->removeValues('ajax');
+        }
+        
+        return $this->set('ajax', $enable);
     }
 
     /**
