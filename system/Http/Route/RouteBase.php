@@ -39,6 +39,7 @@ abstract class RouteBase
         'expiration'        => 'accessibility',
         'validation'        => 'validation',
         'location'          => 'location',
+        'permission'        => 'permission',
     ];
 
     /**
