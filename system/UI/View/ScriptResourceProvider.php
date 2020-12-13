@@ -105,7 +105,7 @@ class ScriptResourceProvider
 
             foreach($group as $key => $item)
             {
-                $items[str_replace('.', '_', $key)] = $item->data();
+                $items[str_replace('.', '_', $key)] = $item;
             }
 
             $data[$group_id] = $items;

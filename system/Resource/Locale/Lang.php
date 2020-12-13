@@ -103,7 +103,7 @@ class Lang extends Translations
 
                             foreach(Locale::get() as $locale)
                             {
-                                $locales[$locale->getId()] = $locale;
+                                $locales[$locale->getId()] = $locale->data();
                             }
 
                             $data[$file->name()] = $locales;
@@ -120,7 +120,7 @@ class Lang extends Translations
         }
         else
         {
-            return new Arr($cache);
+            return $cache;
         }
     }
 
@@ -202,7 +202,7 @@ class Lang extends Translations
 
                 if(array_key_exists($id, $locales))
                 {
-                    $locale = $locales[$id]->data();
+                    $locale = $locales[$id];
 
                     if(array_key_exists($lang, $locale))
                     {
