@@ -1,6 +1,6 @@
 <template extend="master">
     <div class="flex flex-wrap font-sans">
-        <div class="min-h-screen bg-white error-left-col shadow md:hidden">
+        <div class="min-h-screen left-col-width bg-white error-left-col shadow md:hidden">
             <div class="p-40">
                 <a href="https://github.com/voyager-php/voyager" target="/">
                     <img :src="url('images/voyager.png')" class="w-full">
@@ -33,6 +33,9 @@
 </template>
 
 <style type="text/css">
+.left-col-width {
+    width: 300px;
+}
 .error-left-col {
     max-width: 330px;
 }
