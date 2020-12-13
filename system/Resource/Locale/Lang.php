@@ -3,7 +3,6 @@
 namespace Voyager\Resource\Locale;
 
 use Voyager\Facade\Str;
-use Voyager\Util\Arr;
 use Voyager\Util\File\Directory;
 use Voyager\Util\File\Reader;
 
