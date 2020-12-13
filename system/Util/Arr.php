@@ -291,6 +291,23 @@ class Arr
     }
 
     /**
+     * Remove set of values from array.
+     * 
+     * @param   mixed $value
+     * @return  $this
+     */
+
+    public function removeValues($values)
+    {
+        if(is_string($values))
+        {
+            $values = explode(',', $values);
+        }
+
+        return $this->set($this->diff($values));
+    }
+
+    /**
      * Remove duplicate values.
      * 
      * @return $this
