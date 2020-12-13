@@ -113,49 +113,33 @@ class TemplateEngine
 
         if(is_null(static::$hash))
         {
-            static::$hash = Str::hash(app()->success ? $this->uri : app()->code);
+            static::$hash = Str::hash($this->uri);
         }
 
         $cache = new Reader(static::cachePath(Str::hash($this->uri)));
         
-        if(app()->success && $cache->exist())
+        if($cache->exist())
         {
             $this->output = $cache->content();
         }
         else
         {
-            $render = true;
-            
-            if(!app()->success && app()->cache)
+            $html = new Parser($this->extendLayout($this->loadContent()));
+            $html = static::compile($html->get(), $this->emit);
+
+            if(Str::has($html, '<v-') && Str::has($html, '</v-'))
             {
-                $errordoc = new Reader(static::cachePath(Str::hash(app()->code)));
-                
-                if($errordoc->exist())
-                {
-                    $this->output = $errordoc->content();
-                    $render = false;
-                }
+                $html = Renderer::start($html);
             }
 
-            if($render)
+            $config = cache('monsoon') ?? Config::get();
+
+            if($config['enable'])
             {
-                $html = new Parser($this->extendLayout($this->loadContent()));
-                $html = static::compile($html->get(), $this->emit);
-
-                if(Str::has($html, '<v-') && Str::has($html, '</v-'))
-                {
-                    $html = Renderer::start($html);
-                }
-
-                $config = cache('monsoon') ?? Config::get();
-
-                if($config['enable'])
-                {
-                    $html = CSSUtility::extract($html);
-                }
-
-                $this->output = $this->makeExternalResource($html);
+                $html = CSSUtility::extract($html);
             }
+
+            $this->output = $this->makeExternalResource($html);
         }
     }
 

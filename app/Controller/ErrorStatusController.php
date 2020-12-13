@@ -25,7 +25,7 @@ class ErrorStatusController extends Controller
         }
         else
         {
-            $message = lang('status.code.' . $code . '@statuscode');
+            $message = $request->statusMessage();
 
             if(File::exist('resource/view/content/errors/' . $code . '.html'))
             {
