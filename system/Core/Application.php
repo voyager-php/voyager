@@ -265,6 +265,20 @@ class Application
             $this->setInitialConfigurations();
             $this->phpversion = phpversion();
 
+            $constants = cache('constants');
+
+            if(is_null($constants))
+            {
+                $constants = require path('config/constants.php');
+
+                cache('constants', $constants);
+            }
+
+            foreach($constants as $keyword => $value)
+            {
+                define($keyword, $value);
+            }
+
             $this->route = new Collection(cache($this->uri) ?? []);
 
             if($this->route->empty())
