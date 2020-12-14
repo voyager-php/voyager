@@ -25,7 +25,7 @@ abstract class Components
      * @var array
      */
 
-    protected $attr = [];
+    protected $prop = [];
 
     /**
      * Create new component instance.
@@ -42,7 +42,7 @@ abstract class Components
             'show'          => true,
         ]);
 
-        $this->attributes->merge($this->attr);
+        $this->attributes->merge($this->prop);
     }
 
     /**
