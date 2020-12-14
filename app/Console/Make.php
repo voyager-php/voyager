@@ -790,6 +790,10 @@ class Make extends Console
                   ->append('{')
                   ->br()
                   ->br()
+                  ->append('    protected $prop = [];')
+                  ->br()
+                  ->br()
+                  ->append('    protected $data = [];')
                   ->br()
                   ->br()
                   ->append('}');  
