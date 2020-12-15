@@ -355,11 +355,21 @@
     {
         function dd($data)
         {
-            echo'<pre>';
-            var_dump($data);
-            echo'</pre>';
+            ob_start();
             
-            app()->response = '<br />';
+            if(is_array($data))
+            {
+                var_export($data);
+            }
+            else
+            {
+                var_dump($data);
+            }
+
+            $content = ob_get_contents();
+            ob_end_clean();
+
+            app()->response = '<pre>' . str_replace(['&lt;?php&nbsp;', '?&gt;'], '', highlight_string('<?php ' . $content . ' ?>', true)) . '</pre>';
             app()->terminate = true;
         }
     }
