@@ -4,7 +4,6 @@ namespace Voyager\UI\View;
 
 use Voyager\Facade\Dir;
 use Voyager\Facade\Str;
-use Voyager\Http\Security\Authentication;
 use Voyager\UI\Components\Renderer;
 use Voyager\UI\Monsoon\Config;
 use Voyager\UI\Monsoon\CSSUtility;
@@ -290,12 +289,11 @@ class TemplateEngine
             if($exist)
             {
                 $builder = new Builder('const app={');
-                $auth = new Authentication();
 
-                $builder->append('authenticated: ' . ($auth->authenticated() ? 'true' : 'false') . ',');
-                $builder->append('authID: "' . $auth->id() . '",');
-                $builder->append('authType: ' . $auth->type() . ',');
-                $builder->append('authUserId: "' . $auth->userId() . '",');
+                $builder->append('authenticated: ' . (auth()->authenticated() ? 'true' : 'false') . ',');
+                $builder->append('authID: "' . auth()->id() . '",');
+                $builder->append('authType: ' . auth()->type() . ',');
+                $builder->append('authUserId: "' . auth()->userId() . '",');
 
                 $builder->append('get: function(){return JSON.parse("')
                         ->append(addslashes(app()->request()->get()->toJson()))
@@ -441,6 +439,11 @@ class TemplateEngine
 
     private static function stripBlockComments(string $string)
     {
+        if(Str::has($string, '/**') && Str::has($string, '*/'))
+        {
+            return $string;
+        }
+
         $str = new Builder();
 
         foreach(explode('/**', $string) as $segment)
