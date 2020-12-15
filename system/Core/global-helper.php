@@ -12,21 +12,6 @@
     use Voyager\Util\Str as Builder;
 
     /**
-     * Check if variable is a closure.
-     * 
-     * @param   mixed $closure
-     * @return  bool
-     */
-
-    if(!function_exists('is_closure'))
-    {
-        function is_closure($closure)
-        {
-            return $closure instanceof Closure;
-        }
-    }
-
-    /**
      * Return application context.
      * 
      * @return  \Voyager\Core\Application
