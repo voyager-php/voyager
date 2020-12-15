@@ -4,7 +4,6 @@ namespace App\Middleware;
 
 use Voyager\App\Middleware;
 use Voyager\App\Request;
-use Voyager\Http\Security\Authentication;
 
 class AuthenticationMiddleware extends Middleware
 {
@@ -19,9 +18,7 @@ class AuthenticationMiddleware extends Middleware
     {
         if($request->route('authentication'))
         {
-            $auth = new Authentication();
-            
-            if(!$auth->authenticated())
+            if(!auth()->authenticated())
             {
                 if($request->ajax() || $request->route('ajax'))
                 {
@@ -29,9 +26,10 @@ class AuthenticationMiddleware extends Middleware
                 }
                 else
                 {
-                    redirect($auth->config()->redirection);
+                    redirect(auth()->config()->redirection);
                 }
             }
         }
     }
+
 }
