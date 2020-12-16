@@ -90,15 +90,10 @@ abstract class Config
                     if($file->is('php'))
                     {
                         $data = static::send($file->require());
-                    }
-                    else
-                    {
-                        $data = static::send($file->lines());
-                    }
+                        static::$data->set($this->key, $data);
 
-                    static::$data->set($this->key, $data);
-
-                    return $data;
+                        return $data;
+                    }
                 }
                 else
                 {

@@ -30,7 +30,7 @@ class Cache extends Console
 
         foreach($dir->files() as $file)
         {
-            if($file->is('json'))
+            if($file->is('php'))
             {
                 $cleared = true;
                 $file->delete();

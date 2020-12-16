@@ -63,7 +63,7 @@ class Cache
      * @var string
      */
 
-    private $ext = '.json';
+    private $ext = '.php';
 
     /**
      * Instantiate new cache data.
@@ -106,7 +106,7 @@ class Cache
     {
         if($this->reader->exist())
         {
-            $this->data()->set(json_decode($this->reader->content(), true));
+            $this->data()->set($this->reader->require());
         }
     }
 
@@ -169,24 +169,26 @@ class Cache
      * Store new cache data.
      * 
      * @param   mixed $data
+     * @param   string $expire
      * @return  bool
      */
 
     public function store($data)
     {
+        if($data instanceof Collection)
+        {
+            $data = $data->toArray();
+        }
+        else if($data instanceof Arr)
+        {
+            $data = $data->get();
+        }
+
+        $this->data()->set($this->key, $data);
+
         if($this->enabled())
         {
-            if($data instanceof Collection)
-            {
-                $data = $data->toArray();
-            }
-            else if($data instanceof Arr)
-            {
-                $data = $data->get();
-            }
-
-            $this->data()->set($this->key, $data);
-            $this->write($this->data()->toJson());
+            $this->write('<?php' . PHP_EOL . 'return ' . var_export($this->data()->get(), true) . ';');
         }
 
         return $this;

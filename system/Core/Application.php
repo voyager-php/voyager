@@ -8,6 +8,7 @@ use Voyager\Http\Middleware\Kernel;
 use Voyager\Http\Request;
 use Voyager\Http\Response;
 use Voyager\Http\Route\Router;
+use Voyager\Http\Security\Authentication;
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
 use Voyager\Util\Http\Session;
@@ -119,6 +120,14 @@ class Application
     private $request;
 
     /**
+     * Store app authentication object.
+     * 
+     * @var \Voyager\Http\Security\Authentication
+     */
+
+    private $authentication;
+
+    /**
      * Class constructor.
      * 
      * @return void
@@ -152,6 +161,17 @@ class Application
     public function request()
     {
         return $this->request;
+    }
+
+    /**
+     * Return app authentication object.
+     * 
+     * @return  \Voyager\Http\Security\Authentication
+     */
+
+    public function authentication()
+    {
+        return $this->authentication;
     }
 
     /**
@@ -256,42 +276,23 @@ class Application
             require 'global-helper.php';
 
             $this->env = new Collection(cache('env') ?? Env::get());
-            
-            if($this->env->empty())
-            {
-                $this->terminate = true;
-            }
-
             $this->setInitialConfigurations();
             $this->phpversion = phpversion();
-
-            $constants = cache('constants');
-
-            if(is_null($constants))
-            {
-                $constants = require path('config/constants.php');
-
-                cache('constants', $constants);
-            }
-
-            foreach($constants as $keyword => $value)
-            {
-                define($keyword, $value);
-            }
-
+            $this->authentication = new Authentication();
             $this->route = new Collection(cache($this->uri) ?? []);
+            $this->loadConstants();
 
             if($this->route->empty())
             {
                 $this->route = Router::init($this->uri)->getRoute();
 
-                $route = $this->route->toArray();
+                $routedata = $this->route->toArray();
                 $uri = $this->uri;
                 
-                $this->promise('cache_route', function() use($route, $uri) {
+                $this->promise('cache_route', function() use($routedata, $uri) {
                     if(is_null(cache($uri)) && app()->cache)
                     {
-                        cache($uri, $route);
+                        cache($uri, $routedata);
                     }
                 });
                 
@@ -301,28 +302,30 @@ class Application
                 }
             }
 
-            if(strtolower(env('APP_MODE')) === 'down' || strtolower($this->route->mode) === 'down')
+            $route = $this->route;
+
+            if(strtolower(env('APP_MODE')) === 'down' || strtolower($route->mode) === 'down')
             {
                 abort(503);
             }
 
-            if(!is_null($this->route->redirect))
+            if(!is_null($route->redirect))
             {
-                $destination = $this->route->redirect;
+                $destination = $route->redirect;
 
                 $this->promise('redirection', function() use ($destination) {
                     app()->redirect = $destination;
                 });
             }
 
-            if(!is_null($this->route->timezone))
+            if(!is_null($route->timezone))
             {
-                $this->timezone = $this->route->timezone;
+                $this->timezone = $route->timezone;
             }
 
-            if(!is_null($this->route->locale))
+            if(!is_null($route->locale))
             {
-                $this->locale = $this->route->locale;
+                $this->locale = $route->locale;
             }
             else
             {
@@ -334,21 +337,21 @@ class Application
                 }
             }
 
-            if(!is_null($this->route->backup_locale))
+            if(!is_null($route->backup_locale))
             {
-                $this->backup_locale = $this->route->backup_locale;
+                $this->backup_locale = $route->backup_locale;
             }
 
-            if(!is_null($this->route->cache))
+            if(!is_null($route->cache))
             {
-                $this->cache = $this->route->cache;
+                $this->cache = $route->cache;
             }
 
-            $this->static_page = $this->route->static;
+            $this->static_page = $route->static;
 
             new Kernel($this->route);
 
-            $controller = $this->route->controller;
+            $controller = $route->controller;
 
             if(!Str::startWith($controller, 'App\Controller'))
             {
@@ -366,6 +369,27 @@ class Application
             $this->setHeaders();
             $this->response = $response;
             $this->terminate = true;
+        }
+    }
+
+    /**
+     * Load constants and define them globally.
+     * 
+     * @return  void
+     */
+
+    private function loadConstants()
+    {
+        $constants = cache('constants');
+
+        if(is_null($constants))
+        {
+            $constants = cache('constants', require path('config/constants.php'));
+        }
+
+        foreach($constants as $keyword => $value)
+        {
+            define($keyword, $value);
         }
     }
 
@@ -442,6 +466,21 @@ class Application
         $this->timezone         = env('APP_TIMEZONE');
         $this->redirect         = env('APP_REDIRECT');
         $this->version          = env('API_VERSION');
+    }
+
+    /**
+     * Detect if .env file returns no data.
+     * 
+     * @param   \Voyager\Util\Data\Collection $data
+     * @return  void
+     */
+
+    protected function env(Collection $data)
+    {
+        if($data->empty())
+        {
+            $this->terminate = true;
+        }
     }
 
     /**

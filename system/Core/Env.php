@@ -3,32 +3,66 @@
 namespace Voyager\Core;
 
 use Voyager\Facade\Str;
-use Voyager\Util\Arr;
+use Voyager\Util\File\Reader;
 
-class Env extends Config
+class Env
 {
     /**
-     * Instantiate config instance.
+     * Env file cache key.
      * 
-     * @param   mixed $argument
-     * @return  $this
+     * @var string
      */
 
-    protected static function bind()
-    {
-        return new self('env', '.env');
-    }
+    private static $key = 'env';
 
     /**
-     * What kind of data to return?
+     * Load and return .env data.
      * 
-     * @param   mixed $data
+     * @param   string $key
      * @return  mixed
      */
 
-    protected static function send($data)
+    public static function get(string $key = null)
     {
-        $env = new Arr();
+        $cache = function_exists('cache') ? cache(static::$key) : null;
+
+        if(is_null($cache))
+        {
+            $file = new Reader('.env');
+
+            if($file->exist())
+            {
+                $data = static::parse($file->lines());
+
+                if(function_exists('app'))
+                {
+                    app()->cache = array_key_exists('APP_CACHE', $data) ? $data['APP_CACHE'] : false;
+                }
+
+                $cache = function_exists('cache') ? cache(static::$key, $data) : $data;
+            }
+        }
+
+        if(!is_null($key) && array_key_exists($key, $cache))
+        {
+            return $cache[$key];
+        }
+        else
+        {
+            return $cache;
+        }
+    }
+
+    /**
+     * Parse the application properties.
+     * 
+     * @param   array $data
+     * @return  mixed
+     */
+
+    private static function parse(array $data)
+    {
+        $env = [];
         
         foreach($data as $line)
         {
@@ -37,41 +71,36 @@ class Env extends Config
             if(!Str::startWith($line, '#') && !Str::empty($line))
             {
                 $break = Str::break($line, '=');
-                $name  = Str::toUpper($break[0]);
+                $name  = strtoupper($break[0]);
                 $value = Str::moveFromEnd($break[1], ' ');
 
                 if(!Str::empty($name))
                 {
                     if(strtolower($value) === 'null')
                     {
-                        $env->setNull($name, 'null');
+                        $env[$name] = null;
                     }
                     else if(strtolower($value) === 'false')
                     {
-                        $env->set($name, false);
+                        $env[$name] = false;
                     }
                     else if(strtolower($value) === 'true')
                     {
-                        $env->set($name, true);
+                        $env[$name] = true;
                     }
                     else if(is_numeric($value) || is_int($value))
                     {
-                        $env->set($name, (int)$value);
+                        $env[$name] = (int)$value;
                     }
                     else
                     {
-                        $env->set($name, (string)$value);
+                        $env[$name] = (string)$value;
                     }
                 }
             }
         }
 
-        if(function_exists('app'))
-        {
-            app()->cache = $env->has('APP_CACHE') ? $env->get('APP_CACHE') : false;
-        }
-
-        return $env->get();
+        return $env;
     }
 
 }

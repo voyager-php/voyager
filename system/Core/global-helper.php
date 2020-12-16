@@ -3,7 +3,6 @@
     use Voyager\Core\Application;
     use Voyager\Core\Cache;
     use Voyager\Facade\Str;
-    use Voyager\Http\Security\Authentication;
     use Voyager\Resource\Locale\Lang;
     use Voyager\UI\View\TemplateEngine;
     use Voyager\Util\Data\Collection;
@@ -133,7 +132,7 @@
     {
         function auth()
         {
-            return new Authentication();
+            return app()->authentication();
         }
     }
 
