@@ -2,11 +2,7 @@
 
 namespace Voyager\Http\Route;
 
-use Voyager\Facade\Cache;
-use Voyager\Facade\Request;
 use Voyager\Facade\Str;
-use Voyager\Util\Arr;
-use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Directory;
 
 class Router
@@ -22,7 +18,7 @@ class Router
     /**
      * Cached routes.
      * 
-     * @var mixed
+     * @var array
      */
 
     private static $cache;
@@ -71,7 +67,7 @@ class Router
     private function loadRoutes()
     {
         $cache = cache('routes');
-        $data = new Arr();
+        $data = [];
         
         if(is_null($cache))
         {
@@ -81,7 +77,7 @@ class Router
             {
                 foreach($dir->files() as $file)
                 {
-                    $routes = new Arr();
+                    $routes = [];
 
                     if($file->exist() && $file->is('php'))
                     {
@@ -91,31 +87,26 @@ class Router
                         {
                             foreach(Route::all() as $route)
                             {
-                                $routes->push($route->data());
+                                $routes[] = $route->data();
                             }
                         }
-                        
-                        $data->set($file, $routes->get());
                     }
 
                     Route::clear();
 
-                    if(!$routes->empty())
+                    if(!empty($routes))
                     {
-                        $data->set($file->name(), $routes->get());
+                        $data[$file->name()] = $routes;
                     }
                 }
             }
 
-            static::$cache = $data;
-            cache('routes', $data);
+            return cache('routes', $data);
         }
         else
         {
-            $data->set($cache);
+            return $cache;
         }
-
-        return $data;
     }
 
     /**
@@ -126,64 +117,61 @@ class Router
 
     public function find()
     {
-        $matched = new Arr();
+        $matched = [];
         $method = strtolower(app()->request()->method());
         $uri1 = $this->uriToArray($this->uri);
         $routes = static::$cache;
-        $groups = new Arr($routes->keys());
-        $resource = new Arr();
+        $groups = array_keys($routes);
+        $resource = [];
 
-        for($i = 0; $i <= ($groups->length() - 1); $i++)
+        for($i = 0; $i <= (sizeof($groups) - 1); $i++)
         {
-            $group = new Arr($routes->get($groups->get($i)));
+            $group = $routes[$groups[$i]];
             
-            for($j = 0; $j <= ($group->length() - 1); $j++)
+            for($j = 0; $j <= (sizeof($group) - 1); $j++)
             {
-                $route = $group->get($j);
+                $route = $group[$j];
                 $uri2 = $this->uriToArray($route['uri']);
                 
-                if($uri1->length() === $uri2->length())
+                if(sizeof($uri1) === sizeof($uri2))
                 {
                     $n = 0;
 
-                    for($k = 0; $k <= ($uri2->length() - 1); $k++)
+                    for($k = 0; $k <= (sizeof($uri2) - 1); $k++)
                     {
-                        if(strtolower($uri1->get($k)) === strtolower($uri2->get($k)))
+                        if(strtolower($uri1[$k]) === strtolower($uri2[$k]))
                         {
                             $n++;
                         }
                         else
                         {
-                            $segment = $uri2->get($k);
+                            $segment = $uri2[$k];
                             $name = Str::move($segment, 1, 1);
+                            
                             if(Str::startWith($segment, '{') && Str::endWith($segment, '}'))
                             {
-                                $resource->set($name, $uri1->get($k));
+                                $resource[$name] = $uri1[$k];
                                 $n++;
                             }
                         }
                     }
 
-                    if($n === $uri2->length())
+                    if($n === sizeof($uri2))
                     {
-                        if(!$resource->empty())
+                        if(!empty($resource))
                         {
-                            $route['resource'] = $resource->get();
-                        }
-                        else
-                        {
-                            $route['resource'] = [];
+                            $route['resource'] = $resource;
                         }
 
-                        $matched->push($route);
+                        $matched[] = $route;
                     }
                 }
             }
         }
 
-        if(!$matched->empty())
+        if(!empty($matched))
         {
-            foreach($matched->get() as $item)
+            foreach($matched as $item)
             {
                 if(in_array($method, $item['verb']))
                 {
@@ -192,9 +180,9 @@ class Router
                 }
             }
 
-            if($matched->length() === 1)
+            if(sizeof($matched) === 1)
             {
-                $this->route = $matched->get(0);
+                $this->route = $matched[0];
             }
         }
     }
@@ -202,19 +190,19 @@ class Router
     /**
      * Return route data.
      * 
-     * @return  \Voyager\Util\Data\Collection
+     * @return  array
      */
 
     public function getRoute()
     {
-        return new Collection($this->route ?? []);
+        return $this->route;
     }
 
     /**
      * Split the URI by backslash.
      * 
      * @param   string $uri
-     * @return  \Voyager\Util\Arr
+     * @return  array
      */
 
     private function uriToArray(string $uri)
@@ -227,7 +215,7 @@ class Router
             $uri = '';
         }
 
-        return new Arr(explode('/', $uri));
+        return explode('/', $uri);
     }
 
     /**
@@ -255,7 +243,7 @@ class Router
 
     public static function data()
     {
-        return static::$instance->getRoute()->toArray();
+        return static::$instance->getRoute();
     }
 
 }

@@ -5,7 +5,6 @@
     use Voyager\Facade\Str;
     use Voyager\Resource\Locale\Lang;
     use Voyager\UI\View\TemplateEngine;
-    use Voyager\Util\Data\Collection;
     use Voyager\Util\File\Reader;
     use Voyager\Util\Http\Session;
     use Voyager\Util\Str as Builder;
@@ -58,7 +57,7 @@
         {
             $env = app()->env;
 
-            return $env->has($key) ? $env->{$key} : $default;
+            return array_key_exists($key, $env) ? $env[$key] : $default;
         }
     }
 
@@ -462,7 +461,7 @@
 
             if(is_null($data))
             {
-                $instance = new App\Controller\ErrorStatusController(new Collection(['method' => 'index']));
+                $instance = new App\Controller\ErrorStatusController(['method' => 'index']);
                 app()->response = $instance->getResponse();
             }
             else

@@ -74,6 +74,7 @@ abstract class RouteBase
             'expiration'            => null,
             'accessibility'         => null,
             'validation'            => null,
+            'resource'              => [],
             'permission'            => [],
             'location'              => [],
             'limit'                 => 60,

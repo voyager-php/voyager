@@ -2,8 +2,6 @@
 
 namespace Voyager\App;
 
-use Voyager\Util\Data\Collection;
-
 abstract class Controller
 {
     /**
@@ -17,21 +15,17 @@ abstract class Controller
     /**
      * Create new controller instance.
      * 
-     * @param   \Voyager\Util\Data\Collection $route
+     * @param   array
      * @return  void
      */
 
-    public function __construct(Collection $route)
+    public function __construct(array $route)
     {
-        $method = $route->method;
+        $method = $route['method'];
 
         if(method_exists($this, $method))
         {
-            $this->response = $this->{$method}(new Request($route->toArray()));
-        }
-        else
-        {
-            abort(404);
+            $this->response = $this->{$method}(new Request($route));
         }
     }
 

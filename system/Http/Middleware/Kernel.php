@@ -5,7 +5,6 @@ namespace Voyager\Http\Middleware;
 use Voyager\App\Request;
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
-use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Reader;
 
 class Kernel
@@ -13,7 +12,7 @@ class Kernel
     /**
      * Store required middlewares.
      * 
-     * @var \Voyager\Util\Data\Collection
+     * @var array
      */
 
     private static $middlewares;
@@ -21,7 +20,7 @@ class Kernel
     /**
      * Route data.
      * 
-     * @var \Voyager\Util\Data\Collection
+     * @var array
      */
 
     private $route;
@@ -42,7 +41,7 @@ class Kernel
      * @return  void
      */
 
-    public function __construct(Collection $route)
+    public function __construct(array $route)
     {
         $this->route = $route;
 
@@ -51,7 +50,7 @@ class Kernel
             static::$middlewares = $this->loadMiddlewares();
         }
 
-        $this->test(new Collection(static::$middlewares));
+        $this->test(static::$middlewares);
     }
 
     /**
@@ -85,20 +84,21 @@ class Kernel
     /**
      * Test each middlewares.
      * 
+     * @param   array $middlewares
      * @return  void
      */
 
-    private function test(Collection $middlewares)
+    private function test(array $middlewares)
     {
-        $list = new Arr($middlewares->bootstrap);
-        $route = new Collection($middlewares->middlewares);
-        $groups = new Collection($middlewares->groups);
+        $list = new Arr($middlewares['bootstrap']);
+        $route = $middlewares['middlewares'];
+        $groups = $middlewares['groups'];
         
-        foreach($this->route->middlewares as $alias)
+        foreach($this->route['middlewares'] as $alias)
         {
-            if($route->has($alias))
+            if(array_key_exists($alias, $route))
             {
-                $list->push($route->{$alias});
+                $list->push($route[$alias]);
             }
             else if(Str::startWith($alias, 'App\Middleware'))
             {
@@ -106,17 +106,17 @@ class Kernel
             }
         }
 
-        if(!is_null($this->route->middleware))
+        if(!is_null($this->route['middleware']))
         {
-            if($groups->has($this->route->middleware))
+            if(array_key_exists($this->route['middleware'], $groups))
             {
-                $list->merge($groups->{$this->route->middleware});
+                $list->merge($groups[$this->route['middleware']]);
             }
             else
             {
-                if($route->has($this->route->middleware))
+                if(array_key_exists($this->route['middleware'], $route))
                 {
-                    $list->push($route->{$this->route->middleware});
+                    $list->push($route[$this->route['middleware']]);
                 }
             }
         }
@@ -144,7 +144,7 @@ class Kernel
             require path('system/Http/Middleware/helper.php');
 
             $index = app()->index;
-            $request = new Request($this->route->toArray());
+            $request = new Request($this->route);
             $middleware = $queue[$index];
             $instance = new $middleware($request);
             $instance->test();
