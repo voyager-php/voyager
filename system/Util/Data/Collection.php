@@ -20,14 +20,14 @@ class Collection
      * @return  void
      */
 
-    public function __construct($data = [])
+    public function __construct($data)
     {
         if($data instanceof Arr)
         {
             $data = $data->get();
         }
 
-        $this->data = new Arr($data);
+        $this->data = new Arr($data ?? []);
     }
 
     /**
