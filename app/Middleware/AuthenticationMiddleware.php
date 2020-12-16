@@ -26,7 +26,7 @@ class AuthenticationMiddleware extends Middleware
                 }
                 else
                 {
-                    redirect(auth()->config()->redirection);
+                    redirect(auth()->config()['redirection']);
                 }
             }
         }

@@ -281,10 +281,9 @@ class Application
 
             $uri = $this->uri;
 
+            $this->phpversion = phpversion();
             $this->env = cache('env') ?? Env::get();
             $this->setInitialConfigurations();
-            $this->phpversion = phpversion();
-            $this->authentication = new Authentication();
             $this->route = cache($uri);
             $this->loadConstants();
 
@@ -310,17 +309,12 @@ class Application
 
             $route = $this->route;
 
-            if(strtolower(env('APP_MODE')) === 'down' || strtolower($route['mode']) === 'down')
-            {
-                abort(503);
-            }
+            $this->mode = $route['mode'];
 
-            $redirect = $route['redirect'];
-
-            if(!is_null($redirect))
+            if(!is_null($route['redirect']))
             {
-                $this->promise('redirection', function() use ($redirect) {
-                    app()->redirect = $redirect;
+                $this->promise('redirection', function() use ($route) {
+                    app()->redirect = $route['redirect'];
                 });
             }
 
@@ -355,7 +349,7 @@ class Application
 
             $this->static_page = $route['static'];
 
-            new Kernel($this->route);
+            new Kernel($route);
 
             $controller = $route['controller'];
 
@@ -364,7 +358,7 @@ class Application
                 $controller = 'App\Controller\\' . str_replace('.', '\\', $controller);
             }
 
-            $instance = new $controller($this->route);
+            $instance = new $controller($route);
             $response = $instance->getResponse();
 
             if(is_null($response))
@@ -465,6 +459,7 @@ class Application
         $this->proceed          = false;
         $this->index            = 0;
         $this->bypass           = false;
+        $this->mode             = env('APP_MODE');
         $this->locale           = env('APP_LOCALE');
         $this->backup_locale    = env('APP_BACKUP_LOCALE');
         $this->cache            = env('APP_CACHE');
@@ -472,6 +467,7 @@ class Application
         $this->timezone         = env('APP_TIMEZONE');
         $this->redirect         = env('APP_REDIRECT');
         $this->version          = env('API_VERSION');
+        $this->authentication   = new Authentication();
     }
 
     /**
@@ -486,6 +482,21 @@ class Application
         if(empty($data))
         {
             $this->terminate = true;
+        }
+    }
+
+    /**
+     * Set application visibility mode.
+     * 
+     * @param   string $mode
+     * @return  void
+     */
+
+    protected function mode(string $mode)
+    {
+        if(strtolower($mode) === 'down')
+        {
+            abort(503);
         }
     }
 
