@@ -307,59 +307,10 @@ class Application
                 }
             }
 
-            $route = $this->route;
+            $this->overrideFromRouteData($this->route);
 
-            $this->mode = $route['mode'];
-
-            if(!is_null($route['redirect']))
-            {
-                $this->promise('redirection', function() use ($route) {
-                    app()->redirect = $route['redirect'];
-                });
-            }
-
-            if(!is_null($route['timezone']))
-            {
-                $this->timezone = $route['timezone'];
-            }
-
-            if(!is_null($route['locale']))
-            {
-                $this->locale = $route['locale'];
-            }
-            else
-            {
-                $params = $this->request->get();
-
-                if($params->has('_lang'))
-                {
-                    $this->locale = $params->_lang;
-                }
-            }
-
-            if(!is_null($route['backup_locale']))
-            {
-                $this->backup_locale = $route['backup_locale'];
-            }
-
-            if(!is_null($route['cache']))
-            {
-                $this->cache = $route['cache'];
-            }
-
-            $this->static_page = $route['static'];
-
-            new Kernel($route);
-
-            $controller = $route['controller'];
-
-            if(!Str::startWith($controller, 'App\Controller'))
-            {
-                $controller = 'App\Controller\\' . str_replace('.', '\\', $controller);
-            }
-
-            $instance = new $controller($route);
-            $response = $instance->getResponse();
+            $middleware = new Kernel($this->route);
+            $response = $this->invokeController($this->route);
 
             if(is_null($response))
             {
@@ -369,6 +320,75 @@ class Application
             $this->setHeaders();
             $this->response = $response;
             $this->terminate = true;
+        }
+    }
+
+    /**
+     * Invoke end point controller method and return response.
+     * 
+     * @param   array $route
+     * @return  mixed
+     */
+
+    private function invokeController(array $route)
+    {
+        $controller = $route['controller'];
+        
+        if(!Str::startWith($controller, 'App\Controller'))
+        {
+            $controller = 'App\Controller\\' . str_replace('.', '\\', $controller);
+        }
+
+        $instance = new $controller($route);
+        return $instance->getResponse();
+    }
+
+    /**
+     * Override some app data provided by routes.
+     * 
+     * @param   array $route
+     * @return  void
+     */
+
+    private function overrideFromRouteData(array $route)
+    {
+        $this->static_page = $route['static'];
+        $this->mode = $route['mode'];
+
+        if(!is_null($route['redirect']))
+        {
+            $this->promise('redirection', function() use ($route) {
+                app()->redirect = $route['redirect'];
+            });
+        }
+
+        if(!is_null($route['timezone']))
+        {
+            $this->timezone = $route['timezone'];
+        }
+
+        if(!is_null($route['locale']))
+        {
+            $this->locale = $route['locale'];
+        }
+        else
+        {
+            $params = $this->request->get();
+
+            if($params->has('_lang'))
+            {
+                $this->locale = $params->_lang;
+            }
+        }
+
+        if(!is_null($route['backup_locale']))
+        {
+            $this->backup_locale = $route['backup_locale'];
+        }
+
+        if(!is_null($route['cache']))
+        {
+            $this->cache = $route['cache'];
         }
     }
 
