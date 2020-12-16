@@ -16,7 +16,7 @@ class AjaxRequestMiddleware extends Middleware
 
     protected function handle(Request $request)
     {
-        if(!$request->ajax() && $request->route('ajax'))
+        if(!$request->ajax())
         {
             abort(400);
         }
