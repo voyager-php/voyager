@@ -41,8 +41,14 @@ abstract class Controller
 
         if(method_exists($this, $method))
         {
-            $model = new $this->resource($this->resource);
-            $this->model = $model->service();
+            $resource = $this->resource;
+
+            if(!is_null($resource))
+            {
+                $model = new $this->resource($this->resource);
+                $this->model = $model->service();
+            }
+
             $this->response = $this->{$method}(new Request($route));
         }
     }
