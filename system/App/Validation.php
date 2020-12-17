@@ -69,8 +69,7 @@ abstract class Validation
             {
                 if(method_exists($this, $method))
                 {
-                    $value = $this->getParameterValue($method);
-                    $parameter = new Parameter($value, $method);
+                    $parameter = new Parameter($this->getParameterValue($method), $method);
                     $this->{$method}($parameter);
                     
                     $data = $parameter->data();

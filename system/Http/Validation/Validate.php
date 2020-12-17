@@ -279,6 +279,11 @@ class Validate extends ValidateBase
                     $code = 1;
                 }
             }
+
+            if($code !== -1 && $optional)
+            {
+                $code = -1;
+            }
         }
         else
         {

@@ -2,7 +2,6 @@
 
 namespace Voyager\App;
 
-use Voyager\Facade\Request;
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
 use Voyager\Util\Data\Collection;
@@ -93,11 +92,11 @@ class Parameter
         {
             if($method === 'get')
             {
-                $this->value = Request::get($this->key);
+                $this->value = get($this->key);
             }
             else if($method === 'post')
             {
-                $this->value = Request::post($this->key);
+                $this->value = post($this->key);
             }
 
             $this->data->set('method', $method);
@@ -113,7 +112,7 @@ class Parameter
      * @return  $this
      */
 
-    public function setAsOptional(bool $optional)
+    public function setAsOptional(bool $optional = true)
     {
         $this->data->set('optional', $optional);
 
@@ -140,8 +139,11 @@ class Parameter
 
     public function setDefaultValue(string $value)
     {
-        $this->value = $value;
-        $this->data->set('default', $value);
+        if(is_null($this->value) || empty($this->value))
+        {
+            $this->value = $value;
+            $this->data->set('default', $value);
+        }
 
         return $this;
     }
