@@ -28,9 +28,10 @@ class ValidationMiddleware extends Middleware
 
                 if($request->route('ajax') || $request->ajax())
                 {
-                    $errors = [
-                        'errors' => $validate->getErrors()
-                    ];
+                    app()->code = 400;
+                    $errors = $request->apiResponse([
+                        'errors' => $validate->getErrors(),
+                    ]);
                 }
 
                 abort(400, $errors);
