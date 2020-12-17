@@ -30,7 +30,7 @@ abstract class Service
      * @return  string
      */
 
-    protected function tablename()
+    public function tablename()
     {
         return $this->model->tablename();
     }
@@ -41,7 +41,7 @@ abstract class Service
      * @return  \Voyager\Database\DBOperation
      */
 
-    protected function table()
+    public function table()
     {
         return DB::table($this->tablename());
     }
@@ -52,7 +52,7 @@ abstract class Service
      * @return  bool
      */
 
-    protected function exists()
+    public function exists()
     {
         return $this->model->exists();
     }
@@ -63,7 +63,7 @@ abstract class Service
      * @return  array
      */
 
-    protected function columns()
+    public function columns()
     {
         return $this->model->columns();
     }
@@ -74,7 +74,7 @@ abstract class Service
      * @return  void
      */
 
-    protected function truncate()
+    public function truncate()
     {
         if(!$this->empty())
         {
@@ -89,7 +89,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\SelectOperation
      */
 
-    protected function select($arg = '*')
+    public function select($arg = '*')
     {
         return $this->model->select($arg);
     }
@@ -101,7 +101,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\UpdateOperation
      */
 
-    protected function update($arg = null)
+    public function update($arg = null)
     {
         return $this->model->update($arg);
     }
@@ -113,7 +113,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\InsertOperation
      */
 
-    protected function insert($arg = null)
+    public function insert($arg = null)
     {
         return $this->model->insert($arg);
     }
@@ -124,7 +124,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\DeleteOperation
      */
 
-    protected function delete()
+    public function delete()
     {
         return $this->model->delete();
     }
@@ -136,7 +136,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function all($arg = '*')
+    public function all($arg = '*')
     {
         return $this->select($arg)->get();
     }
@@ -147,7 +147,7 @@ abstract class Service
      * @return  int
      */
 
-    protected function totalRows()
+    public function totalRows()
     {
         return $this->model->totalRows();
     }
@@ -158,7 +158,7 @@ abstract class Service
      * @return  bool
      */
 
-    protected function empty()
+    public function empty()
     {
         return $this->totalRows() === 0;
     }
@@ -171,7 +171,7 @@ abstract class Service
      * @return  array
      */
 
-    protected function pluck(string $key, int $limit = null)
+    public function pluck(string $key, int $limit = null)
     {
         if(is_null($limit))
         {
@@ -190,7 +190,7 @@ abstract class Service
      * @return  bool
      */
 
-    protected function exist(int $id)
+    public function exist(int $id)
     {
         return !$this->select('id')->equal('id', $id)->get()->empty();
     }
@@ -203,7 +203,7 @@ abstract class Service
      * @return  array
      */
 
-    protected function getById(int $id, $arg = '*')
+    public function getById(int $id, $arg = '*')
     {
         return $this->select($arg)->equal('id', $id)->get();
     }
@@ -217,7 +217,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function setById(int $id, string $key, $value)
+    public function setById(int $id, string $key, $value)
     {
         return $this->update()->set($key, $value)->equal('id', $id)->exec();
     }
@@ -230,7 +230,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function editById(int $id, $data = [])
+    public function editById(int $id, $data = [])
     {
         return $this->update($data)->equal('id', $id)->exec();
     }
@@ -242,7 +242,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function deleteById(int $id)
+    public function deleteById(int $id)
     {
         return $this->delete()->equal('id', $id)->exec();
     }
@@ -256,7 +256,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\SelectOperation
      */
 
-    protected function equal(string $key, $value, $arg = '*')
+    public function equal(string $key, $value, $arg = '*')
     {
         return $this->select($arg)->equal($key, $value);
     }
@@ -270,7 +270,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\SelectOperation
      */
 
-    protected function notEqual(string $key, $value, $arg = '*')
+    public function notEqual(string $key, $value, $arg = '*')
     {
         return $this->select($arg)->notEqual($key, $value);
     }
@@ -282,7 +282,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\SelectOperation
      */
 
-    protected function count(string $alias)
+    public function count(string $alias)
     {
         return $this->select('COUNT(id) AS ' . $alias);
     }
@@ -295,7 +295,7 @@ abstract class Service
      * @return  bool
      */
 
-    protected function has(string $key, $value)
+    public function has(string $key, $value)
     {
         return (int)$this->count('total')->equal($key, $value)->get()->total !== 0;
     }
@@ -308,7 +308,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function get(int $index, $arg = '*')
+    public function get(int $index, $arg = '*')
     {
         return $this->select($arg)->limit($index, 1)->get();
     }
@@ -320,7 +320,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function first($arg = '*')
+    public function first($arg = '*')
     {
         return $this->get(0, $arg);
     }
@@ -332,7 +332,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function last($arg = '*')
+    public function last($arg = '*')
     {
         return $this->select($arg)->orderBy('desc', 'id')->limit(0, 1)->get();
     }
@@ -344,7 +344,7 @@ abstract class Service
      * @return  int
      */
 
-    protected function sum(string $key)
+    public function sum(string $key)
     {
         return (int)$this->select('SUM(' . $key . ') AS total_sum')->get()->total_sum;
     }
@@ -356,7 +356,7 @@ abstract class Service
      * @return  int
      */
 
-    protected function ave(string $key)
+    public function ave(string $key)
     {
         return (int)$this->select('AVE(' . $key . ') AS total_ave')->get()->total_ave;
     }
@@ -368,7 +368,7 @@ abstract class Service
      * @return  int
      */
 
-    protected function min(string $key)
+    public function min(string $key)
     {
         return (int)$this->select('MIN(' . $key . ') AS min_value')->get()->min_value;
     }
@@ -380,7 +380,7 @@ abstract class Service
      * @return  int
      */
 
-    protected function max(string $key)
+    public function max(string $key)
     {
         return (int)$this->select('MAX(' . $key . ') AS max_value')->get()->max_value;
     }
@@ -393,7 +393,7 @@ abstract class Service
      * @return  mixed
      */
 
-    protected function softDelete(int $id)
+    public function softDelete(int $id)
     {
         return $this->setById($id, 'deleted', 'NOW()');
     }
@@ -405,7 +405,7 @@ abstract class Service
      * @return  bool
      */
 
-    protected function isSoftDeleted(int $id)
+    public function isSoftDeleted(int $id)
     {
         return (bool)$this->select('id')->equal('id', $id)->isDeleted()->get()->empty();
     }
@@ -417,7 +417,7 @@ abstract class Service
      * @return  bool
      */
 
-    protected function isEdited(int $id)
+    public function isEdited(int $id)
     {
         return $this->select('id')->equal('id', $id)->isDeleted()->get()->empty();
     }

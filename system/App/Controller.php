@@ -13,6 +13,22 @@ abstract class Controller
     private $response;
 
     /**
+     * Store database resource class.
+     * 
+     * @var string
+     */
+
+    protected $resource;
+
+    /**
+     * Store database model.
+     * 
+     * @var \Voyager\Database\Model
+     */
+
+    protected $model;
+
+    /**
      * Create new controller instance.
      * 
      * @param   array
@@ -25,6 +41,8 @@ abstract class Controller
 
         if(method_exists($this, $method))
         {
+            $model = new $this->resource($this->resource);
+            $this->model = $model->service();
             $this->response = $this->{$method}(new Request($route));
         }
     }
