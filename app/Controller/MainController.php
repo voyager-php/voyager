@@ -16,7 +16,7 @@ class MainController extends Controller
 
     protected function index(Request $request)
     {
-        return view('content.index');
+        return view('content.landing');
     }
 
 }
