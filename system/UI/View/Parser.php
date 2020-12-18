@@ -350,16 +350,16 @@ class Parser
         {
             if(Str::startWith($segment, Directives::keys()))
             {
-                $directive = Str::break($segment, "\n")[0];
+                $directive = trim(Str::break($segment, "\n")[0]);
                 $name = Str::break($directive, '(')[0];
                 $value = null;
 
                 if(Str::has($directive, '('))
                 {
-                    $value = Str::move(Str::break($directive, '(')[1], 1, 2);
+                    $value = Str::move(Str::break($directive, '(')[1], 0, 1);
                 }
 
-                $this->callable->push('<?php echo Voyager\Resource\View\Directives::call(\'' . $name . '\',\'' . $value . '\'); ?>');
+                $this->callable->push('<?php echo Voyager\UI\View\Directives::call(\'' . $name . '\',\'' . $value . '\'); ?>');
                 $str->append('[#### ' . $this->index . ' ####]' . "\n" . Str::move($segment, strlen($directive)));
                 $this->index++;
             }

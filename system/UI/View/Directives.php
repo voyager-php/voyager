@@ -3,26 +3,57 @@
 namespace Voyager\UI\View;
 
 use Closure;
-use Voyager\Util\File\Reader;
 
 class Directives
 {
+    /**
+     * Store directive keys.
+     * 
+     * @var array
+     */
+
     private static $keys = [];
+
+    /**
+     * Store registered directives.
+     * 
+     * @var array
+     */
+
     private static $registered = [];
+
+    /**
+     * Check if directives are declared.
+     * 
+     * @var bool
+     */
+
     private static $declared = false;
-    private $key;
+
+    /**
+     * Store directives closure.
+     * 
+     * @var \Closure
+     */
+
     private $closure;
 
-    private function __construct(string $key, Closure $closure)
+    /**
+     * Instantiate directives class.
+     * 
+     * @param   \Closure $closure
+     * @return  void
+     */
+
+    private function __construct(Closure $closure)
     {
-        $this->key = $key;
         $this->closure = $closure;
     }
 
     /**
-     * CLOSURE
-     * ----------------------------------
      * Return closure object.
+     * 
+     * @return  \Closure
      */
 
     public function closure()
@@ -31,47 +62,54 @@ class Directives
     }
 
     /**
-     * DECLARATIONS
-     * ----------------------------------
      * Declare your directives here.
+     * 
+     * @return  void
      */
 
     public static function declarations()
     {
-        
+        static::set('csrf_token', function($val) {
+            return csrf_token();
+        });
     }
 
     /**
-     * CALL
-     * ----------------------------------
      * Call directive closures.
+     * 
+     * @param   string $key
+     * @param   string $value
+     * @return  mixed
      */
 
     public static function call(string $key, string $value)
     {
         $closure = static::$registered[$key]->closure();
+
         return $closure($value);
     }
 
     /**
-     * SET
-     * ----------------------------------
      * Create new template directives.
+     * 
+     * @param   string $key
+     * @param   \Closure $closure
+     * @return  void
      */
 
-    public static function set(string $key, Closure $closure)
+    private static function set(string $key, Closure $closure)
     {
         if(!array_key_exists($key, static::$registered))
         {
             static::$keys[] = $key;
-            static::$registered[$key] = new self($key, $closure);
+            static::$registered[$key] = new self($closure);
         }
     }
 
     /**
-     * KEYS
-     * ----------------------------------
      * Return registered directive keys.
+     * 
+     * @return  array
      */
 
     public static function keys()
@@ -80,9 +118,9 @@ class Directives
     }
 
     /**
-     * GET
-     * ----------------------------------
      * Return registered directives.
+     * 
+     * @return  array
      */
 
     public static function get()
@@ -92,6 +130,7 @@ class Directives
             static::declarations();
             static::$declared = true;
         }
+
         return static::$registered;
     }
 }
