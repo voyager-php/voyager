@@ -59,7 +59,8 @@ class Request
 
     public function url()
     {
-        return url($this->uri()) . $this->query();
+        $query = $this->query();
+        return url($this->uri()) . (!is_null($query) ? '?' : '') . $query;
     }
 
     /**
