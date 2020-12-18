@@ -338,6 +338,8 @@
     {
         function dd($data)
         {
+            $trace = debug_backtrace();
+
             ob_start();
             
             if(is_array($data))
@@ -352,7 +354,12 @@
             $content = ob_get_contents();
             ob_end_clean();
 
-            app()->response = '<pre>' . str_replace(['&lt;?php&nbsp;', '?&gt;'], '', highlight_string('<?php ' . $content . ' ?>', true)) . '</pre>';
+            app()->response = view('content.debug.dd', [
+                'content' => $content,
+                'file'    => '..\\' . Str::moveFromStart($trace[0]['file'], Str::move(app()->request()->server('DOCUMENT_ROOT'), 0, 6)),
+                'line'    => $trace[0]['line'],
+            ]);
+
             app()->terminate = true;
         }
     }
