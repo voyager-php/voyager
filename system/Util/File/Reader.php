@@ -40,8 +40,15 @@ class Reader
 
     public function __construct(string $path)
     {
+        $shutdown = false;
+
+        if(function_exists('app'))
+        {
+            $shutdown = app()->shutdown ?? false;
+        }
+
         $this->file = Str::moveFromBothEnds($path, '/');
-        $this->path = (!app()->shutdown) ? path($this->file) : $this->file;
+        $this->path = (!$shutdown) ? path($this->file) : $this->file;
         $this->lines = new Arr();
     }
 

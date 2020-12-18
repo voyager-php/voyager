@@ -49,6 +49,14 @@ class Directory
     private $location;
 
     /**
+     * If app is in state of shutdown.
+     * 
+     * @var bool
+     */
+
+    private $shutdown = false;
+
+    /**
      * Instantiate new directory instance.
      * 
      * @param   string $path
@@ -57,8 +65,13 @@ class Directory
 
     public function __construct(string $path)
     {
+        if(function_exists('app'))
+        {
+            $this->shutdown = app()->shutdown ?? false;
+        }
+
         $this->path = Str::moveFromBothEnds($path, '/') . '/';
-        $this->location = !app()->shutdown ? path($this->path) : $this->path;
+        $this->location = !$this->shutdown ? path($this->path) : $this->path;
         $this->files = new Arr();
         $this->collection = new Arr();
         $this->directories = new Arr();
@@ -191,7 +204,7 @@ class Directory
         if(!$dir->exist())
         {
             $path = $this->path . $name;
-            mkdir(!app()->shutdown ? path($path) : $path);
+            mkdir(!$this->shutdown ? path($path) : $path);
         }
 
         return $dir;
