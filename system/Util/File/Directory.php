@@ -58,7 +58,7 @@ class Directory
     public function __construct(string $path)
     {
         $this->path = Str::moveFromBothEnds($path, '/') . '/';
-        $this->location = path($this->path);
+        $this->location = !app()->shutdown ? path($this->path) : $this->path;
         $this->files = new Arr();
         $this->collection = new Arr();
         $this->directories = new Arr();
@@ -190,7 +190,8 @@ class Directory
         
         if(!$dir->exist())
         {
-            mkdir(path($this->path . $name));
+            $path = $this->path . $name;
+            mkdir(!app()->shutdown ? path($path) : $path);
         }
 
         return $dir;

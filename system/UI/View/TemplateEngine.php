@@ -372,8 +372,8 @@ class TemplateEngine
 
     private function loadContent()
     {
-        $reader = new Reader(static::resourcePath(str_replace('.', '/', $this->content)));
-
+        $reader = new Reader(static::resourcePath($this->content));
+        
         if($reader->exist())
         {
             $html = $reader->content();

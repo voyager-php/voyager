@@ -249,7 +249,7 @@ class Parser
                 if(!Str::startWith($segment, '--') && !Str::endWith($segment, '--'))
                 {
                     $contain = Str::break($segment, '}}');
-                    $this->callable->push('<?php echo htmlspecialchars(' . trim($contain[0]) . '); ?>');
+                    $this->callable->push('<?php echo htmlspecialchars(' . $contain[0]. '); ?>');
                     $str->append('[#### ' . $this->index . ' ####]' . $contain[1]);
                     $this->index++;
                 }

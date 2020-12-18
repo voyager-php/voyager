@@ -41,7 +41,7 @@ class Reader
     public function __construct(string $path)
     {
         $this->file = Str::moveFromBothEnds($path, '/');
-        $this->path = path($this->file);
+        $this->path = (!app()->shutdown) ? path($this->file) : $this->file;
         $this->lines = new Arr();
     }
 

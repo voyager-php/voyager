@@ -115,6 +115,7 @@ class CSSUtility
                                 $data = new Arr($mediaqueries->get($pseudo));
                                 $data->push(static::generate($key, $util, null, $negative));
 
+                                $data->unique();
                                 $mediaqueries->set($pseudo, $data->get());
                             }
                             else
@@ -147,6 +148,7 @@ class CSSUtility
                                     $data = new Arr($mediaqueries->get($pseudo));
                                     $data->push(static::generate($key, $class, null, $negative, $value));
 
+                                    $data->unique();
                                     $mediaqueries->set($pseudo, $data->get());
                                 }
                                 else

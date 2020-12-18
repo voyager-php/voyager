@@ -3,6 +3,7 @@
 namespace Voyager\Core;
 
 use Closure;
+use Voyager\Core\Error\Handler;
 use Voyager\Facade\Str;
 use Voyager\Http\Middleware\Kernel;
 use Voyager\Http\Request;
@@ -12,7 +13,7 @@ use Voyager\Http\Security\Authentication;
 use Voyager\Util\Arr;
 use Voyager\Util\Http\Session;
 
-class Application
+class Application extends Handler
 {
     /**
      * Required PHP version.
@@ -133,6 +134,7 @@ class Application
      */
 
     public function __construct() {
+        $this->setup();
         $this->request                  = new Request();
         $this->uri                      = $this->request->uri();
         $this->data                     = new Arr();
@@ -575,27 +577,6 @@ class Application
     protected function limit(int $limit)
     {
         set_time_limit($limit);
-    }
-
-    /**
-     * Set application debug mode.
-     * 
-     * @param   bool $mode
-     * @return  void
-     */
-
-    protected function debug(bool $mode)
-    {
-        if(!$mode)
-        {
-            error_reporting(0);
-            ini_set('display_errors', 0);
-        }
-        else
-        {
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-        }
     }
 
     /**

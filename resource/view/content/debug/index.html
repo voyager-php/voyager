@@ -1,0 +1,220 @@
+<template extend="master" title="Oops! looks like something went wrong.">
+    <div class="font-sans">
+        <div class="debuger-header w-full shadow">
+            <div class="float-left h-full box-border p-10 pl-20 md:float-none md:w-full md:content-center md:text-center">
+                <a href="http://voyagerframework.com" target="/">
+                    <img :src="url('images/voyager-horizontal.png')" class="h-full">
+                </a>
+            </div>
+            <div class="float-right md:hidden md:float-none">
+                <ul class="list-none main-menu pr-40">
+                    @foreach($menu as $item)
+                        <li class="inline">
+                            <a :href="$item['url']" class="text-white px-20 font-medium text-sm" target="/">
+                                {{ $item['label'] }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+            <div class="clear-both"></div>
+        </div>
+        <div class="w-full flex flex-wrap">
+            <div class="bg-gray-900 column-left box-border text-white lg:hidden">
+                <div>
+                    <h3 class="block font-medium text-base p-10 pb-0">Includes ({{ sizeof($includes) }})</h3>
+                </div>
+                <div class="text-sm p-10 text-gray-400">
+                    <ul class="list-none">
+                        @foreach($includes as $item)
+                            <li class="block p-5 bg-gray-800 rounded mb-2 truncate">
+                                ..\{{ $item }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+            <div class="box-border flex-1 lg:w-full">
+                <div class="p-20 bg-red-500 text-white shadow mb-20">
+                    <h1 class="block font-hairline text-2xl">
+                        <b>Oops!</b> looks like something went wrong.
+                    </h1>
+                </div>
+
+                <div class="px-40 box-border w-full">
+                    
+                    <div class="w-full rounded bg-white shadow overflow-hidden mb-20">
+                        <div class="p-10 bg-gray-400 text-sm text-gray-700">
+                            <div class="text-black font-medium text-lg">
+                                Message
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            {{ $message }}
+                        </div>
+                    </div>
+
+                    <div class="w-full rounded bg-white shadow overflow-hidden mb-20">
+                        <div class="p-10 bg-gray-400 text-sm text-gray-700">
+                            <div class="float-left">
+                                ..\{{ $file }}
+                            </div>
+                            <div class="float-right">
+                                line {{ $line }}
+                            </div>
+                            <div class="clear-both"></div>
+                        </div>
+                        <div class="p-10">
+                            <div class="w-full bg-black">
+                                <ul class="list-none text-white">
+                                    <ul class="list-none code-box text-base">
+                                        @foreach($code as $key => $item)
+                                            <li class="block p-5 mb-1 bg-gray-900">
+                                            <div class="text-white float-left pr-10 text-green-600">
+                                                    {{ $key + 1 }}
+                                                </div>
+                                                <div class="float-left">
+                                                    {{ $item }}
+                                                </div>
+                                                <div class="clear-both"></div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full rounded bg-white shadow overflow-hidden mb-20">
+                        <div class="p-10 bg-gray-400 text-sm text-gray-700">
+                            <div class="text-black font-medium text-lg">
+                                Environment
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            <table class="table-fixed border border-solid border-gray-300 border-collapse text-sm w-full">
+                                @foreach($env as $key => $item)
+                                <tr>    
+                                    <td class="border border-solid border-gray-300 p-5 font-medium w-25 bg-gray-100 truncate md:w-50">
+                                        {{ $key }}
+                                    </td>
+                                    <td class="border border-solid border-gray-300 p-5 text-gray-600 truncate md:w-50">
+                                        {{ $item }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="w-full rounded bg-white shadow overflow-hidden mb-20">
+                        <div class="p-10 bg-gray-400 text-sm text-gray-700">
+                            <div class="text-black font-medium text-lg">
+                                Request
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            <table class="table-fixed border border-solid border-gray-300 border-collapse text-sm w-full">
+                                @foreach($request as $key => $item)
+                                <tr>    
+                                    <td class="border border-solid border-gray-300 w-25 p-5 font-medium bg-gray-100 truncate md:w-50">
+                                        {{ $key }}
+                                    </td>
+                                    <td class="border border-solid border-gray-300 p-5 text-gray-600 truncate md:w-50">
+                                        {{ $item }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+
+                    @if(!empty($get))
+                    <div class="w-full rounded bg-white shadow overflow-hidden mb-20">
+                        <div class="p-10 bg-gray-400 text-sm text-gray-700">
+                            <div class="text-black font-medium text-lg">
+                                GET
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            <table class="table-fixed border border-solid border-gray-300 border-collapse text-sm w-full">
+                                @foreach($get as $key => $item)
+                                <tr>    
+                                    <td class="border border-solid border-gray-300 w-25 p-5 font-medium bg-gray-100 md:w-50">
+                                        {{ $key }}
+                                    </td>
+                                    <td class="border border-solid border-gray-300 p-5 text-gray-600 md:w-50">
+                                        {{ $item }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(!empty($post))
+                    <div class="w-full rounded bg-white shadow overflow-hidden mb-20">
+                        <div class="p-10 bg-gray-400 text-sm text-gray-700">
+                            <div class="text-black font-medium text-lg">
+                                POST
+                            </div>
+                        </div>
+                        <div class="p-10">
+                            <table class="table-fixed border border-solid border-gray-300 border-collapse text-sm w-full">
+                                @foreach($post as $key => $item)
+                                <tr>    
+                                    <td class="border border-solid border-gray-300 w-25 p-5 font-medium bg-gray-100 md:w-50">
+                                        {{ $key }}
+                                    </td>
+                                    <td class="border border-solid border-gray-300 p-5 text-gray-600 md:w-50">
+                                        {{ $item }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                    @endif
+                    
+                </div>
+
+                <div class="p-40 pt-0 text-sm">
+                    <div class="float-left lg:float-none lg:w-full lg:text-center lg:mb-5">
+                        &copy; <a href="https://www.linkedin.com/in/jlcrisostomo/" class="font-bold text-blue-700" target="/">James Levi Crisostomo</a>
+                        <span class="text-gray-600">&lt;jlcrisostomo@voyagerframework.com&gt;</span>
+                    </div>
+                    <div class="float-right text-right lg:float-none lg:w-full lg:text-center text-xs">
+                        This framework is an open-sourced software licensed under <a href="https://opensource.org/licenses/MIT" target="/" class="text-blue-700">MIT</a> license.
+                    </div>
+                    <div class="clear-both"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style type="text/css">
+body {
+    background-color: #cccccc;
+}
+.debuger-header {
+    height: 80px;
+    background-color: #4c3cb4;
+}
+.column-left {
+    width: 360px;
+}
+.code-box {
+    font-family: 'Courier New', Courier, monospace;
+}
+.main-menu li a {
+    line-height: 80px;
+    display: block;
+    float: left;
+}
+.main-menu li a:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+    text-decoration: none;
+}
+</style>

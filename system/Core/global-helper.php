@@ -419,7 +419,7 @@
     {
         function view(string $path, array $emit = [])
         {
-            $view = new TemplateEngine($path, $emit);
+            $view = new TemplateEngine(str_replace('.', '/', $path), $emit);
             return $view->output();
         }
     }
