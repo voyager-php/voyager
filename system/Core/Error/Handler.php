@@ -135,7 +135,6 @@ abstract class Handler
     {
         $lines = [];
 
-
         $fn = fopen($file, 'r');
 
         while(!feof($fn))
