@@ -406,10 +406,10 @@ class TemplateEngine
 
         if(!$this->emit->hasKey('title'))
         {
-            $this->emit->set('title', $attribute->title ?? 'Untitled Page');
+            $this->emit->set('title', $attribute['title'] ?? 'Untitled Page');
         }
 
-        foreach($attribute->toArray() as $key => $value)
+        foreach($attribute as $key => $value)
         {
             if($key !== 'extend' && $key !== 'title')
             {
@@ -419,7 +419,7 @@ class TemplateEngine
 
         return [
             'content'           => Parser::template($cache),
-            'layout'            => $attribute->extend ?? null,
+            'layout'            => $attribute['extend'] ?? null,
             'script'            => Parser::script($cache),
             'styles'            => Parser::style($cache),
         ];

@@ -200,14 +200,14 @@ class Parser
      * 
      * @param   string $tag
      * @param   string $html
-     * @return  \Voyager\Util\Data\Collection
+     * @return  array
      */
 
     public static function getAttribute(string $tag, string $html)
     {
         if(static::hasTag($tag, $html))
         {
-            $data = new Arr();
+            $data = [];
             $parse = Str::break(Str::break($html, '<' . $tag)[1], '>')[0];
             
             if(Str::has($parse, ' '))
@@ -218,11 +218,11 @@ class Parser
                 foreach($props as $prop)
                 {
                     $break = Str::break($prop, '="');
-                    $data->set($break[0], $break[1]);
+                    $data[$break[0]] = $break[1];
                 }
             }
 
-            return $data->toCollection();
+            return $data;
         }
     }
 
