@@ -451,9 +451,15 @@ class Application extends Handler
                 {
                     $this->header('Access-Control-Allow-Origin', $origin);
                     $this->header('Access-Control-Allow-Credentials', 'true');
-                    $this->header('Access-Control-Max-Age', '86400');
                 }
             }
+        }
+
+        if(!app()->cache)
+        {
+            $this->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $this->header('Pragma', 'no-cache');
+            $this->header('Expires', '0');
         }
 
         if(!$this->headers->empty())
