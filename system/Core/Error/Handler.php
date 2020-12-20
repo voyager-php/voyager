@@ -161,7 +161,7 @@ abstract class Handler
         $that = $this;
 
         set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($that) {
-            if(env('APP_DEBUG'))
+            if(env('APP_DEBUG') && !app()->request()->ajax())
             {
                 $that->catch($errno, $errstr, $errfile, $errline);
             }
@@ -174,7 +174,7 @@ abstract class Handler
         register_shutdown_function(function () use ($that) {
             $error = error_get_last();
             
-            if(!is_null($error) && env('APP_DEBUG'))
+            if(!is_null($error) && env('APP_DEBUG') && !app()->request()->ajax())
             {
                 $this->shutdown = true;
                 $that->catch($error['type'], $error['message'], $error['file'], $error['line']);
