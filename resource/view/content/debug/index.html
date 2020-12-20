@@ -10,7 +10,7 @@
                 <ul class="list-none main-menu pr-40">
                     @foreach($menu as $item)
                         <li class="inline">
-                            <a :href="$item['url']" class="text-white px-20 font-medium text-sm" target="/">
+                            <a :href="$item['url']" class="text-white px-20 font-medium text-sm no-underline" target="/">
                                 {{ $item['label'] }}
                             </a>
                         </li>
@@ -181,7 +181,7 @@
 
                 <div class="p-40 pt-0 text-sm">
                     <div class="float-left lg:float-none lg:w-full lg:text-center lg:mb-5">
-                        &copy; <a href="https://www.linkedin.com/in/jlcrisostomo/" class="font-bold text-blue-700" target="/">James Levi Crisostomo</a>
+                        &copy; <a href="https://www.linkedin.com/in/jlcrisostomo/" class="font-bold text-blue-700 no-underline hover:underline" target="/">James Levi Crisostomo</a>
                         <span class="text-gray-600">&lt;jlcrisostomo@voyagerframework.com&gt;</span>
                     </div>
                     <div class="float-right text-right lg:float-none lg:w-full lg:text-center text-xs">
@@ -215,6 +215,5 @@ body {
 }
 .main-menu li a:hover {
     background-color: rgba(255, 255, 255, 0.03);
-    text-decoration: none;
 }
 </style>
