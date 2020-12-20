@@ -24,6 +24,8 @@ class Button extends Components
         'style'                 => null,
         'scheme'                => 'primary',
         'onclick'               => null,
+        'href'                  => null,
+        'open'                  => null,
         'bold'                  => true,
         'rounded'               => true,
     ];
@@ -259,6 +261,30 @@ class Button extends Components
             $this->hover = 'gray-400';
             $this->color = 'gray-700';
         }
+    }
+
+    /**
+     * Set onclick page redirection.
+     * 
+     * @param   string $url
+     * @return  void
+     */
+
+    protected function href(string $url)
+    {
+        $this->onclick = "window.location.href='" . $url . "';";
+    }
+
+    /**
+     * Open URL in new tab.
+     * 
+     * @param   string $url
+     * @return  void
+     */
+
+    protected function open(string $url)
+    {
+        $this->onclick = "window.open('" . $url . "', '_blank');";
     }
 
 }
