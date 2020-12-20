@@ -274,6 +274,43 @@
         window.open(voyager.url(uri, param), '_blank');
     };
 
+    voyager.bind = function(obj, event, callback)
+    {
+        if(obj.addEventListener)
+        {
+            obj.addEventListener(event, callback, false);
+        }
+        else if(obj.attachEvent)
+        {
+            obj.attachEvent('on' + event, callback);
+        }
+        else
+        {
+            obj['on' + event] = callback;
+        }
+    };
+
+    voyager.unbind = function(obj, event, callback)
+    {
+        if(obj.removeEventListener)
+        {
+            obj.removeEventListener(event, callback, false);
+        }
+        else if(obj.detachEvent)
+        {
+            obj.detachEvent('on' + event, callback);
+        }
+        else
+        {
+            obj.removeAttribute('on' + event);
+        }
+    };
+
+    voyager.ready = function(callback)
+    {
+        voyager.bind(window, 'DOMContentLoaded', callback);
+    };
+
     if(!window.voyager)
     {
         window.voyager = voyager;

@@ -338,7 +338,9 @@ class TemplateEngine
             if(!empty($source))
             {
                 $output->append('<script type="text/javascript">')
+                       ->append('voyager.ready(function() {')
                        ->append($source)
+                       ->append('});')
                        ->append('</script>');
             }
 
