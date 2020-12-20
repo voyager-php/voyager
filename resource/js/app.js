@@ -269,6 +269,11 @@
         window.location.reload();
     };
 
+    voyager.open = function(uri, param = null)
+    {
+        window.open(voyager.url(uri, param), '_blank');
+    };
+
     if(!window.voyager)
     {
         window.voyager = voyager;
