@@ -360,7 +360,6 @@ class Application extends Handler
 
     private function overrideFromRouteData(array $route)
     {
-        $this->static_page = $route['static'];
         $this->mode = $route['mode'];
 
         if(!is_null($route['redirect']))

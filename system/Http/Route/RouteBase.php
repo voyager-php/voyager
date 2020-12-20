@@ -68,7 +68,6 @@ abstract class RouteBase
             'cors'                  => false,
             'ip'                    => false,
             'ajax'                  => false,
-            'static'                => false,
             'cache'                 => null,
             'redirect'              => null,
             'expiration'            => null,
@@ -429,18 +428,6 @@ abstract class RouteBase
     public function cache(bool $cache = true)
     {
         return $this->set('cache', $cache);
-    }
-
-    /**
-     * Set route to static page.
-     * 
-     * @param   bool $static
-     * @return  $this
-     */
-
-    public function static(bool $static = true)
-    {
-        return $this->set('static', $static);
     }
 
     /**
