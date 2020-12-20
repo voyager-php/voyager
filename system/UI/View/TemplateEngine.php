@@ -8,6 +8,7 @@ use Voyager\UI\Components\Renderer;
 use Voyager\UI\Monsoon\Config;
 use Voyager\UI\Monsoon\CSSUtility;
 use Voyager\Util\Arr;
+use Voyager\Util\File\Directory;
 use Voyager\Util\File\Reader;
 use Voyager\Util\Str as Builder;
 
@@ -288,6 +289,14 @@ class TemplateEngine
 
             if(!$core->exist() || !app()->cache)
             {
+                $dir = new Directory('public/js/');
+
+                if(!$dir->exist())
+                {
+                    $dir = new Directory('public/');
+                    $dir->makeFolder('js');
+                }
+
                 $scripts   = [$cache];
                 $scripts[] = 'voyager.setProperty(\'version\',\'' . app()->version() . '\');'; 
                 $scripts[] = 'voyager.setProperty(\'locale\',\'' . env('APP_LOCALE') . '\');';
