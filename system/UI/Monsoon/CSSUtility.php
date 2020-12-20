@@ -5,7 +5,6 @@ namespace Voyager\UI\Monsoon;
 use Voyager\Facade\Str;
 use Voyager\UI\View\TemplateEngine;
 use Voyager\Util\Arr;
-use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Reader;
 use Voyager\Util\Str as Builder;
 
@@ -108,15 +107,13 @@ class CSSUtility
                         if($mediaquery)
                         {
                             $key = $pseudo . '-' . $util;
-
                             $css->push($key);
+
                             if($mediaqueries->hasKey($pseudo))
                             {
                                 $data = new Arr($mediaqueries->get($pseudo));
                                 $data->push(static::generate($key, $util, null, $negative));
-
-                                $data->unique();
-                                $mediaqueries->set($pseudo, $data->get());
+                                $mediaqueries->set($pseudo, $data->unique()->get());
                             }
                             else
                             {
@@ -126,7 +123,14 @@ class CSSUtility
                         else
                         {
                             $css->push($util);
-                            $classes->set($util, static::generate($util, $util, $pseudo, $negative));
+                            $cache = cache('util_' . $util);
+
+                            if(is_null($cache))
+                            {
+                                $cache = cache('util_' . $util, static::generate($util, $util, $pseudo, $negative));
+                            }
+
+                            $classes->set($util, $cache);
                         }
                     }
                     else
@@ -140,16 +144,13 @@ class CSSUtility
                             if($mediaquery)
                             {
                                 $key = $pseudo . '-' . $util;
-
                                 $css->push($key);
 
                                 if($mediaqueries->hasKey($pseudo))
                                 {
                                     $data = new Arr($mediaqueries->get($pseudo));
                                     $data->push(static::generate($key, $class, null, $negative, $value));
-
-                                    $data->unique();
-                                    $mediaqueries->set($pseudo, $data->get());
+                                    $mediaqueries->set($pseudo, $data->unique()->get());
                                 }
                                 else
                                 {
@@ -159,7 +160,14 @@ class CSSUtility
                             else
                             {
                                 $css->push($util);
-                                $classes->set($util, static::generate($util, $class, $pseudo, $negative, $value));
+                                $cache = cache('util_' . $util);
+                                
+                                if(is_null($cache))
+                                {
+                                    $cache = cache('util_' . $util, static::generate($util, $class, $pseudo, $negative, $value));
+                                }
+
+                                $classes->set($util, $cache);
                             }
                         }
                         else
@@ -220,14 +228,14 @@ class CSSUtility
     {
         if(static::$classes->hasKey($classname))
         {
-            $data = new Collection(static::$classes->get($classname));
-            $props = new Arr($data->props);
-            $default = new Arr($data->default);
-            $units = new Arr($data->units);
-            $instead = new Arr($data->instead);
-            $colors = new Arr($data->colors);
-            $important = new Arr($data->important);
-            $configuration = new Collection(static::$config['default']);
+            $data = static::$classes->get($classname);
+            $props = $data['props'];
+            $default = new Arr($data['default']);
+            $units = new Arr($data['units']);
+            $instead = new Arr($data['instead']);
+            $colors = new Arr($data['colors']);
+            $important = new Arr($data['important']);
+            $configuration = static::$config['default'];
             $str = new Builder('.' . $util);
             
             if(!is_null($pseudo))
@@ -237,7 +245,7 @@ class CSSUtility
 
             $str->append('{');
 
-            foreach($props->get() as $key => $value)
+            foreach($props as $key => $value)
             {
                 $str->append($key . ':' . $value);
         
@@ -251,15 +259,15 @@ class CSSUtility
 
             foreach($default->get() as $key => $value)
             {
-                $config = new Arr($configuration->{$value} ?? []);
+                $config = $configuration[$value];
             
                 if(is_null($val) && $instead->hasKey($key))
                 {
                     $str->append($key . ':' . $instead->get($key));
                 }
-                else if($config->hasKey($val))
+                else if(array_key_exists($val, $config))
                 {
-                    $str->append($key . ':' . $config->get($val));
+                    $str->append($key . ':' . $config[$val]);
                 }
                 else
                 {
@@ -283,11 +291,11 @@ class CSSUtility
 
             foreach($colors->get() as $key => $value)
             {
-                $config = new Arr($configuration->colors ?? []);
+                $config = $configuration['colors'];
             
-                if($config->hasKey($value))
+                if(array_key_exists($value, $config))
                 {
-                    $color = $config->get($value);
+                    $color = $config[$value];
                 
                     if(is_string($color))
                     {

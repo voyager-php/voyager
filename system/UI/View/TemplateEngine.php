@@ -2,14 +2,12 @@
 
 namespace Voyager\UI\View;
 
-use Voyager\Facade\Dir;
 use Voyager\Facade\Str;
+use Voyager\Resource\Locale\Lang;
 use Voyager\UI\Components\Renderer;
 use Voyager\UI\Monsoon\Config;
 use Voyager\UI\Monsoon\CSSUtility;
 use Voyager\Util\Arr;
-use Voyager\Util\Data\Collection;
-use Voyager\Util\File\Directory;
 use Voyager\Util\File\Reader;
 use Voyager\Util\Str as Builder;
 
@@ -133,7 +131,7 @@ class TemplateEngine
 
             $config = cache('monsoon') ?? Config::get();
 
-            if($config['enable'])
+            if($config['enable'] && Str::has($html, 'class="'))
             {
                 $html = CSSUtility::extract($html);
             }
@@ -202,131 +200,140 @@ class TemplateEngine
 
     private function makeExternalResource(string $html)
     {
-        $hash = static::$hash;
-        
         if(Str::has($html, '</head>'))
         {
-            $ext = '.css';
-            $path = 'public/css/static/';
             $break = Str::break($html, '</head>');
-            $file = new Reader($path . $hash . $ext);
-            $exist = $file->exist();
+            $cache = cache('app_css');
 
-            if(!$exist || !app()->cache)
+            if(is_null($cache))
             {
                 $app_css = new Reader('resource/css/app.css');
-                
+
                 if($app_css->exist())
                 {
-                    static::addStylesheet('app_css', $app_css->content());
+                    $cache = cache('app_css', trim($app_css->content()));
                 }
-
-                if(!Dir::exist('public/css/'))
-                {
-                    $dir = new Directory('public/');
-                    $dir->makeFolder('css')
-                        ->makeFolder('static');
-                }
-
-                $file->delete();
-                
-                $source = static::$styles->reverse()->join();
-                
-                if(env('APP_COMPRESS'))
-                {
-                    $source = preg_replace( "/\r|\n/", "", $source);
-                }
-
-                Dir::make($path, $hash . $ext, $source);
-                $exist = true;
             }
 
-            if($exist)
+            static::addStylesheet('app_css', $cache);
+
+            $source = static::$styles->reverse()->join();
+
+            if(env('APP_COMPRESS'))
             {
-                $html = $break[0] . '<link rel="stylesheet" type="text/css" href="' . url('css/static/' . $hash . $ext) . '"></head>' . $break[1];
+                $source = preg_replace("/\r|\n/", "", $source);
             }
+
+            $builder = new Builder('const app={');
+            $builder->br();
+
+            $builder->append('authenticated: ' . (auth()->authenticated() ? 'true' : 'false') . ',')
+                    ->br();
+            $builder->append('authID: "' . auth()->id() . '",')
+                    ->br();
+            $builder->append('authType: ' . auth()->type() . ',')
+                    ->br();
+            $builder->append('authUserId: "' . auth()->userId() . '",')
+                    ->br();
+
+            $builder->append('get: function(){return JSON.parse("')
+                    ->append(addslashes(app()->request()->get()->toJson()))
+                    ->append('");},')
+                    ->br();
+
+            $builder->append('post: function(){return JSON.parse("')
+                    ->append(addslashes(app()->request()->post()->toJson()))
+                    ->append('");},')
+                    ->br();
+
+             $builder->append('resource: function(){return JSON.parse("')
+                    ->append(addslashes(json_encode(app()->route('resource'))))
+                    ->append('");},')
+                    ->br();
+
+            $builder->append('token:"')
+                    ->append(csrf_token())
+                    ->append('"')
+                    ->br();
+
+            $builder->append('};');
+
+            $html = $break[0] . '<style type="text/css">' . PHP_EOL . $source . '</style><script type="text/javascript">' . $builder->get() . '</script></head>' . $break[1];
         }
         
         if(Str::has($html, '</body>'))
         {
-            $ext = '.js';
-            $path = 'public/js/static/';
             $break = Str::break($html, '</body>');
-            $file = new Reader($path . $hash . $ext);
-            $exist = $file->exist();
+            $cache = cache('app_js');
 
-            if(!$exist || !app()->cache)
+            if(is_null($cache))
             {
-                ScriptResourceProvider::init();
-            
                 $app_js = new Reader('resource/js/app.js');
 
                 if($app_js->exist())
                 {
-                    static::addScript('app_js', $app_js->content());
+                    $cache = cache('app_js', trim($app_js->content()));
                 }
-
-                if(!Dir::exist('public/js/'))
-                {
-                    $dir = new Directory('public/');
-                    $dir->makeFolder('js')
-                        ->makeFolder('static');
-                }
-
-                $file->delete();
-
-                $source = static::$script->reverse()->join();
-
-                if(env('APP_COMPRESS'))
-                {
-                    $source = preg_replace( "/\r|\n/", "", $source);
-                }
-
-                Dir::make($path, $hash . $ext, $source);
-                $exist = true;
             }
 
-            if($exist)
+            $source = static::$script->reverse()->join();
+
+            if(env('APP_COMPRESS'))
             {
-                $builder = new Builder('const app={');
-
-                $builder->append('authenticated: ' . (auth()->authenticated() ? 'true' : 'false') . ',');
-                $builder->append('authID: "' . auth()->id() . '",');
-                $builder->append('authType: ' . auth()->type() . ',');
-                $builder->append('authUserId: "' . auth()->userId() . '",');
-
-                $builder->append('get: function(){return JSON.parse("')
-                        ->append(addslashes(app()->request()->get()->toJson()))
-                        ->append('");},');
-
-                $builder->append('post: function(){return JSON.parse("')
-                        ->append(addslashes(app()->request()->post()->toJson()))
-                        ->append('");},');
-
-                $builder->append('resource: function(){return JSON.parse("')
-                        ->append(addslashes(json_encode(app()->route('resource'))))
-                        ->append('");},');
-
-                $builder->append('token:"')
-                        ->append(csrf_token())
-                        ->append('"');
-
-                $builder->append('};');
-
-                $html = $break[0] . '<script type="text/javascript">' . $builder->get() . '</script><script type="text/javascript" src="' . url('js/static/' . $hash . $ext) . '"></script></body>' . $break[1];
+                $source = preg_replace("/\r|\n/", "", $source);
             }
-        }
 
-        if(app()->static_page && app()->cache)
-        {
-            $path = 'storage/cache/html/';
+            $output = new Builder($break[0]);
+            $core = new Reader('public/js/core.js');
 
-            if(!Dir::exist($path))
+            if(!$core->exist() || !app()->cache)
             {
-                Dir::makeFolder('storage/cache/', 'html');
+                $scripts   = [$cache];
+                $scripts[] = 'voyager.setProperty(\'version\',\'' . app()->version() . '\');'; 
+                $scripts[] = 'voyager.setProperty(\'locale\',\'' . env('APP_LOCALE') . '\');';
+                $scripts[] = 'voyager.setProperty(\'backup_locale\', \'' . env('APP_BACKUP_LOCALE') . '\');';
+                $scripts[] = 'voyager.setProperty(\'app_url\',\'' . env('APP_URL') . '\');';
+                $scripts[] = 'voyager.setProperty(\'app_name\',\'' . env('INFO_NAME') . '\');';
+                $scripts[] = 'voyager.setProperty(\'app_description\',\'' . env('INFO_DESCRIPTION') . '\');';
+                $scripts[] = 'voyager.setProperty(\'app_version\',\'' . env('INFO_VERSION') . '\');';
+
+                $request = app()->request();
+                
+                $scripts[] = 'voyager.setProperty(\'current_url\',\'' . addslashes($request->url()) . '\');';
+                $scripts[] = 'voyager.setProperty(\'base_url\', \'' . addslashes($request->baseURL()) . '\');';
+                $scripts[] = 'voyager.setProperty(\'uri\',\'' . addslashes($request->uri()) . '\');';
+
+                $data = [];
+                $locale = Lang::load();
+
+                foreach($locale as $group_id => $group)
+                {
+                    $items = [];
+
+                    foreach($group as $key => $item)
+                    {
+                        $items[str_replace('.', '_', $key)] = $item;
+                    }
+        
+                    $data[$group_id] = $items;
+                }
+
+                $scripts[] = 'voyager.setProperty(\'translations\', JSON.parse("' . addslashes(json_encode($data)) . '"));';
+
+                $core->delete();
+                $core->make(preg_replace("/\r|\n/", "", implode('', $scripts)));
+            }
+            
+            $output->append('<script type="text/javascript" src="' . url('/js/core.js') . '"></script>');
+            
+            if(!empty($source))
+            {
+                $output->append('<script type="text/javascript">')
+                       ->append($source)
+                       ->append('</script>');
             }
 
-            Dir::make($path, $hash . '.html', $html);
+            $html = $output->append('</body>' . $break[1])->get();
         }
 
         return $html;
@@ -335,65 +342,87 @@ class TemplateEngine
     /**
      * Wrap content with extended layout.
      * 
-     * @param   \Voyager\Util\Data\Collection $data
+     * @param   array
      * @return  string
      */
 
-    private function extendLayout(Collection $data)
+    private function extendLayout(array $data)
     {
-        if(!is_null($data->layout))
+        $layout = $data['layout'];
+
+        if(!is_null($layout))
         {
-            $reader = new Reader(static::resourcePath('layout/' . str_replace('.', '/', $data->layout)));
-            
-            if($reader->exist())
+            $html = cache('layout_' . $layout);
+            $css = $data['styles'];
+            $js = $data['script'];
+
+            if(is_null($html))
             {
-                if(!is_null($data->styles))
-                {
-                    static::addStylesheet('layout', $data->styles);
-                }
+                $reader = new Reader(static::resourcePath('layout/' . str_replace('.', '/', $layout)));
 
-                if(!is_null($data->script))
+                if($reader->exist())
                 {
-                    static::addScript('layout', $data->script);
+                    $html = cache('layout_' . $layout, trim($reader->content()));
                 }
-
-                return str_replace('@content', $data->content, $reader->content());
             }
+
+            if(!is_null($css))
+            {
+                static::addStylesheet('layout_css', $css);
+            }
+
+            if(!is_null($js))
+            {
+                static::addScript('layout_js', $js);
+            }
+
+            return str_replace('@content', $data['content'], $html);
         }
 
-        return $data->content;
+        return $data['content'];
     }
 
     /**
      * Load html content.
      * 
-     * @return \Voyager\Util\Data\Collection
+     * @return array
      */
 
     private function loadContent()
     {
-        $reader = new Reader(static::resourcePath($this->content));
-        
-        if($reader->exist())
+        $cache = cache($this->content);
+
+        if(is_null($cache))
         {
-            $html = $reader->content();
-            $content = Parser::template($html);
-            $script = Parser::script($html);
-            $styles = Parser::style($html);
-            $attribute = Parser::getAttribute('template', $html);
+            $reader = new Reader(static::resourcePath($this->content));
 
-            if(!$this->emit->hasKey('title'))
+            if($reader->exist())
             {
-                $this->emit->set('title', $attribute->title ?? 'Untitled Page');
+                $cache = cache($this->content, trim($reader->content()));
             }
-
-            return new Collection([
-                'content'    => $content,
-                'layout'     => $attribute->extend ?? null,
-                'script'     => $script,
-                'styles'     => $styles,
-            ]);
         }
+
+        $attribute = Parser::getAttribute('template', $cache);
+
+        if(!$this->emit->hasKey('title'))
+        {
+            $this->emit->set('title', $attribute->title ?? 'Untitled Page');
+        }
+
+        foreach($attribute->toArray() as $key => $value)
+        {
+            if($key !== 'extend' && $key !== 'title')
+            {
+                $this->emit->set($key, $value);
+            }
+        }
+
+        return [
+            'content'           => Parser::template($cache),
+            'layout'            => $attribute->extend ?? null,
+            'script'            => Parser::script($cache),
+            'styles'            => Parser::style($cache),
+        ];
     }
 
     /**
@@ -407,6 +436,7 @@ class TemplateEngine
     public static function addScript(string $key, string $script)
     {
         $hash = Str::hash($key, 'md5');
+
         if(!static::$script->hasKey($hash))
         {
             static::$script->set($hash, static::stripBlockComments($script));
@@ -424,6 +454,7 @@ class TemplateEngine
     public static function addStylesheet(string $key, string $styles)
     {
         $hash = Str::hash($key, 'md5');
+
         if(!static::$styles->hasKey($hash))
         {
             static::$styles->set($hash, static::stripBlockComments($styles));

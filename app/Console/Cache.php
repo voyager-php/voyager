@@ -6,6 +6,7 @@ use Voyager\App\Console;
 use Voyager\Console\Message;
 use Voyager\Facade\Dir;
 use Voyager\Util\File\Directory;
+use Voyager\Util\File\Reader;
 
 class Cache extends Console
 {
@@ -26,65 +27,22 @@ class Cache extends Console
         }
 
         $dir = new Directory('storage/cache');
-        $cleared = false;
-
+        
         foreach($dir->files() as $file)
         {
             if($file->is('php'))
             {
-                $cleared = true;
+                $msg->success('Cache file has been cleared.');
                 $file->delete();
             }
         }
 
-        if($cleared)
+        $core = new Reader('public/js/core.js');
+
+        if($core->exist())
         {
-            $msg->success('Cache file has been cleared.');
-        }
-
-        $html = new Directory('storage/cache/html/');
-
-        if($html->exist())
-        {
-            foreach($html->files() as $file)
-            {
-                if($file->is('html'))
-                {
-                    $file->delete();
-                }
-            }
-
-            $msg->success('Static html cache files have been cleared.');
-        }
-
-        $css = new Directory('public/css/static/');
-
-        if($css->exist())
-        {
-            foreach($css->files() as $file)
-            {
-                if($file->is('css'))
-                {
-                    $file->delete();
-                }
-            }
-
-            $msg->success('Static css cache files have been cleared.');
-        }
-
-        $js = new Directory('public/js/static/');
-
-        if($js->exist())
-        {
-            foreach($js->files() as $file)
-            {
-                if($file->is('js'))
-                {
-                    $file->delete();
-                }
-            }
-
-            $msg->success('Static javascript file have been deleted.');
+            $msg->success('Core javascript cache file has been cleared.');
+            $core->delete();
         }
     }
 

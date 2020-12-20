@@ -5,7 +5,6 @@ namespace Voyager\App;
 use Voyager\UI\View\Parser;
 use Voyager\UI\View\TemplateEngine;
 use Voyager\Util\Arr;
-use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Reader;
 use Voyager\Util\Str as Builder;
 
@@ -163,26 +162,39 @@ abstract class Components
     /**
      * Render components.
      * 
-     * @return  \Voyager\Util\Data\Collection
+     * @return  array
      */
 
     public function generate()
     {
         $this->rendered();
-        $namespace = new Builder(get_called_class());
-        $reader = new Reader($namespace->move(10)->replace('\\', '/')->append('.html')->prepend('resource/view/component')->get());
+
+        $component = get_called_class();
+        $cache_html = cache('comp_html_' . $component);
+        $cache_css = cache('comp_css_' . $component);
+        $cache_js = cache('comp_js_' . $component);
         
-        if($reader->exist())
+        if(is_null($cache_html))
         {
-            $content = $reader->content();
-            $html = new Parser(Parser::template($content));
-            
-            return new Collection([
-                'html'      => TemplateEngine::compile($html->get(), $this->attributes->merge($this->data)),
-                'script'    => Parser::script($content),
-                'style'     => Parser::style($content),
-            ]);
+            $namespace = new Builder($component);
+            $reader = new Reader($namespace->move(10)->replace('\\', '/')->append('.html')->prepend('resource/view/component')->get());
+
+            if($reader->exist())
+            {
+                $content = trim($reader->content());
+                $cache_html = cache('comp_html_' . $component, Parser::template($content));
+                $cache_css = cache('comp_css_' . $component, Parser::style($content));
+                $cache_js = cache('comp_js_' . $component, Parser::script($content));
+            }
         }
+
+        $parser = new Parser($cache_html);
+
+        return [
+            'html'      => TemplateEngine::compile($parser->get(), $this->attributes->merge($this->data)),
+            'script'    => $cache_js,
+            'style'     => $cache_css,
+        ];
     }
 
 }

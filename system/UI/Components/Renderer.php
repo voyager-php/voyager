@@ -144,17 +144,17 @@ class Renderer
                     $show = ($show === 'true') ? true : false;
                 }
 
-                $output = $show ? $generated->html : '';
+                $output = $show ? $generated['html'] : '';
                 $rendered = true;
             
-                if(!is_null($generated->script) && $show)
+                if(!is_null($generated['script']) && $show)
                 {
-                    TemplateEngine::addScript($name, $generated->script);
+                    TemplateEngine::addScript($name, $generated['script']);
                 }
 
-                if(!is_null($generated->style) && $show)
+                if(!is_null($generated['style']) && $show)
                 {
-                    TemplateEngine::addStylesheet($name, $generated->style);
+                    TemplateEngine::addStylesheet($name, $generated['style']);
                 }
             }
 
