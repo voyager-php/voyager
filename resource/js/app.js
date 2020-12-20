@@ -1,6 +1,5 @@
 (function(global, factory) 
 {
-
     'use strict';
 
     if(typeof global.voyager === 'undefined' && typeof app !== 'undefined')
@@ -263,11 +262,6 @@
     voyager.redirect = function(uri, param = null)
     {
         window.location.href = voyager.url(uri, param);
-    };
-
-    voyager.goHome = function()
-    {
-        voyager.redirect('/');
     };
 
     voyager.reload = function() 
