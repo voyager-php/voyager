@@ -75,6 +75,7 @@ class Parser
         $html = $this->replaceDirectives($html);
         $html = $this->replaceEndScopes($html);
         $html = $this->replaceTemplates($html);
+        $html = $this->replaceUnescapedTemplates($html);
         $html = $this->replaceDynamicAttribute($html);
         $html = $this->replaceAllCallable($html);
         $html = $this->removeTemplateComments($html);
@@ -274,6 +275,46 @@ class Parser
         }
 
         if(!$str->empty() && $str->startWith('{{'))
+        {
+            $str->move(2);
+        }
+
+        return $str->get();
+    }
+
+    /**
+     * Replace templates without escaping the result.
+     * 
+     * @param   string $html
+     * @return  string
+     */
+
+    private function replaceUnescapedTemplates(string $html)
+    {
+        if(!Str::has($html, '{%'))
+        {
+            return $html;
+        }
+
+        $str = new Builder();
+
+        foreach(explode('{%', $html) as $segment)
+        {
+            if(Str::has($segment, '%}'))
+            {
+                $contain = Str::break($segment, '%}');
+
+                $this->callable->push('<?php echo ' . $contain[0]. '; ?>');
+                $str->append('[#### ' . $this->index . ' ####]' . $contain[1]);
+                $this->index++;
+            }
+            else
+            {
+                $str->append('{%' . $segment);
+            }
+        }
+
+        if(!$str->empty() && $str->startWith('{%'))
         {
             $str->move(2);
         }

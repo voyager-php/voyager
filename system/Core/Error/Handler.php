@@ -39,7 +39,7 @@ abstract class Handler
 
             for($i = $start; $i <= (sizeof($lines) - 1); $i++)
             {
-                $codes[$i] = $lines[$i];
+                $codes[$i] = str_replace(' ', '&nbsp;', $lines[$i]);
 
                 if($i === $end)
                 {
