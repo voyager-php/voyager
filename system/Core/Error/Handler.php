@@ -100,6 +100,11 @@ abstract class Handler
                     'url'                => 'https://www.youtube.com/channel/UChPmgrewC0AcLfNHzIJCKgw',
                     'label'              => 'Youtube',
                 ],
+                [
+                    'key'                => 'release',
+                    'url'                => 'https://github.com/voyager-php/voyager/releases/tag/' . env('API_VERSION'),
+                    'label'              => env('API_VERSION'),
+                ],
             ],
             'type'                       => $errno,
             'message'                    => $errstr,
