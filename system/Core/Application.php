@@ -442,8 +442,6 @@ class Application extends Handler
 
         if(!is_null($this->route))
         {
-            $this->header('Access-Control-Allow-Methods', strtoupper(implode(",", $this->route['verb'])));
-            
             if($this->route['cors'])
             {
                 $this->header('Access-Control-Allow-Origin', '*');
@@ -456,8 +454,11 @@ class Application extends Handler
                 {
                     $this->header('Access-Control-Allow-Origin', $origin);
                     $this->header('Access-Control-Allow-Credentials', 'true');
+                    $this->header('Access-Control-Max-Age', '86400');
                 }
             }
+
+            $this->header('Access-Control-Allow-Methods', strtoupper(implode(",", $this->route['verb'])));
         }
 
         if(!app()->cache)

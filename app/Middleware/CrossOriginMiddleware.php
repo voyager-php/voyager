@@ -15,7 +15,7 @@ class CrossOriginMiddleware extends Middleware
      * @var string
      */
 
-    protected $config_path = 'config/cors.php';
+    private $config_path = 'config/cors.php';
 
     /**
      * Handle request logic.
@@ -47,7 +47,7 @@ class CrossOriginMiddleware extends Middleware
      * @return  array
      */
 
-    protected function loadRequestOrigins()
+    private function loadRequestOrigins()
     {
         $cache = cache('cross-origin');
         
@@ -58,8 +58,7 @@ class CrossOriginMiddleware extends Middleware
 
             if($file->exist())
             {
-                $list = $file->require();
-                cache('cross-origin', $list);
+                $list = cache('cross-origin', $file->require());
             }
 
             return $list;
