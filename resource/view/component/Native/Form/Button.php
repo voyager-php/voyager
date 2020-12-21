@@ -1,6 +1,6 @@
 <?php
 
-namespace Components\Button;
+namespace Components\Native\Form;
 
 use Voyager\App\Components;
 

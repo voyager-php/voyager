@@ -9,6 +9,7 @@
 
 return [
 
-    'button'                => \Components\Button\Button::class,
+    'button'                => \Components\Native\Form\Button::class,
+    'text'                  => \Components\Native\Form\Text::class,
 
 ];

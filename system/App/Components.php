@@ -42,7 +42,6 @@ abstract class Components
 
     public function __construct()
     {
-        $this->created();
         $this->attributes = new Arr([
             'id'            => null,
             'slot'          => null,
@@ -50,6 +49,7 @@ abstract class Components
         ]);
 
         $this->attributes->merge($this->prop);
+        $this->created();
     }
 
     /**
@@ -122,7 +122,7 @@ abstract class Components
 
     public function __set(string $key, $value)
     {
-        if($this->attributes->hasKey($key) && $this->attributes->get($key) !== $value)
+        if($this->attributes->hasKey($key))
         {
             $this->updated($value);
             $this->attributes->set($key, $value);
