@@ -1,0 +1,14 @@
+<template>
+    <form :id="$id" :name="$name" class="native-form" :method="$verb" :action="$action" :enctype="$enctype" :onsubmit="$onsubmit" :onreset="$onreset">
+        <input type="hidden" name="_token" :value="csrf_token()">
+        <input type="hidden" name="_verb" :value="strtoupper($method)"> 
+
+        @if(!is_null($redirection))
+            <input type="hidden" name="_href" :value="$redirection">
+        @endif
+
+        <div>
+            {{ $slot }}
+        </div>
+    </form>
+</template>

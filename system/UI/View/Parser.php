@@ -249,7 +249,16 @@ class Parser
                 if(!Str::startWith($segment, '--') && !Str::endWith($segment, '--'))
                 {
                     $contain = Str::break($segment, '}}');
-                    $this->callable->push('<?php echo htmlspecialchars(' . $contain[0]. '); ?>');
+                    
+                    if(str_replace(' ', '', $contain[0]) === '$slot')
+                    {
+                        $this->callable->push('<?php echo ' . $contain[0]. '; ?>');
+                    }
+                    else
+                    {
+                        $this->callable->push('<?php echo htmlspecialchars(' . $contain[0]. '); ?>');
+                    }
+
                     $str->append('[#### ' . $this->index . ' ####]' . $contain[1]);
                     $this->index++;
                 }
