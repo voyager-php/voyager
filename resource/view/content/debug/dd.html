@@ -1,7 +1,7 @@
 <template extend="master" title="Dump Data">
     <div class="p-20 font-sans">
-        <div class="bg-gray-500 overflow-hidden rounded">
-            <div class="p-10 text-white upper-header text-sm">
+        <div class="bg-gray-400 overflow-hidden rounded">
+            <div class="p-10 text-white text-sm" style="background-color: #4c3cb4;">
                 <div class="float-left">
                     {{ $file }}
                 </div>
@@ -11,16 +11,13 @@
                 <div class="clear-both"></div>
             </div>
             <div class="p-10 dump-text text-sm">
-                <pre>{{ $content }}</pre>
+                {% $content %}
             </div>
         </div>
     </div>
 </template>
 
 <style type="text/css">
-.upper-header {
-    background-color: #4c3cb4;
-}
 .dump-text {
     font-family: 'Courier New', Courier, monospace;
 }
