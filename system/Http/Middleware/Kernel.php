@@ -66,14 +66,14 @@ class Kernel
         if(is_null($cache))
         {
             $kernel = new Reader($this->path);
-            
+            $middlewares = [];
+
             if($kernel->exist())
             {
-                $middlewares = $kernel->require();
-                cache('middleware', $middlewares);
-
-                return $middlewares;
+                $middlewares = cache('middleware', $kernel->require());
             }
+
+            return $middlewares;
         }
         else
         {
