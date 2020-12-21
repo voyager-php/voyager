@@ -6,7 +6,7 @@ use Voyager\App\Middleware;
 use Voyager\App\Request;
 use Voyager\Util\File\Reader;
 
-class IPBlockerMiddleware extends Middleware
+class IPGateMiddleware extends Middleware
 {
     /**
      * Location of blocked ip addresses.
@@ -14,7 +14,7 @@ class IPBlockerMiddleware extends Middleware
      * @var string
      */
 
-    protected $config_path = 'config/ip-blocker.php';
+    private $config_path = 'config/ip.php';
 
     /**
      * Handle request logic.
@@ -25,9 +25,21 @@ class IPBlockerMiddleware extends Middleware
 
     protected function handle(Request $request)
     {
-        if(in_array($request->client(), $this->loadIps()))
+        $config = $this->config();
+
+        if(in_array($request->client(), $config['list']))
         {
-            abort(403);
+            if($config['block'])
+            {
+                abort(403);
+            }
+        }
+        else
+        {
+            if(!$config['block'])
+            {
+                abort(403);
+            }
         }
     }
 
@@ -37,7 +49,7 @@ class IPBlockerMiddleware extends Middleware
      * @return  array
      */
 
-    protected function loadIps()
+    private function config()
     {
         $cache = cache('ip-address');
         

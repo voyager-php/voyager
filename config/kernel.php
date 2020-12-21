@@ -44,7 +44,7 @@ return [
         'cors'              => \App\Middleware\CrossOriginMiddleware::class,
         'ajax'              => \App\Middleware\AjaxRequestMiddleware::class,
         'csrf'              => \App\Middleware\CSRFTokenMiddleware::class,
-        'ip'                => \App\Middleware\IPBlockerMiddleware::class,
+        'ip'                => \App\Middleware\IPGateMiddleware::class,
         'validation'        => \App\Middleware\ValidationMiddleware::class,
         'accessibility'     => \App\Middleware\RouteAccessibilityMiddleware::class,
         'location'          => \App\Middleware\BlockLocationMiddleware::class,
