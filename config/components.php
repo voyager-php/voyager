@@ -9,6 +9,7 @@
 
 return [
 
+    'alert'                 => \Components\Native\Dialog\Alert::class,
     'button'                => \Components\Native\Form\Button::class,
     'form'                  => \Components\Native\Form\Form::class,
     'text'                  => \Components\Native\Form\Text::class,

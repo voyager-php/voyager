@@ -1,0 +1,49 @@
+<template>
+    <div :id="$id" :class="native-alert $visibility">
+        <div :class="$background $text_color box-border flex text-sm">
+            <div class="p-5 alert-shade">
+                @if(!is_null($icon))
+                    <img :src="$icon">
+                @endif
+            </div>
+            <div class="flex-grow flex">
+                <div :class="$cursor flex-grow p-12 pr-0" :onclick="$onclick">
+                    <div class="alert-message overflow-auto pr-5">
+                        {{ $slot }}
+                    </div>
+                </div>
+
+                @if($dismiss)
+                    <div class="alert-dismiss ml-10 p-12 pl-0">
+                        <div class="dismiss-box">
+                            <a href="#" :data-alert-id="$id" :class="$text_color block no-underline font-bold text-center" onclick="this.parentNode.parentNode.parentNode.parentNode.style.display='none'; return false">
+                                &times;
+                            </a>
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</template>
+
+<style type="text/css">
+.alert-message {
+    line-height: 20px;
+    max-height: 100px;
+}
+.dismiss-box {
+    width: 20px;
+    height: 20px;
+}
+.dismiss-box:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+.alert-shade {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+.dismiss-box a {
+    font-size: 18px;
+    line-height: 17px;
+}
+</style>
