@@ -21,7 +21,7 @@ class Application extends Handler
      * @var string
      */
 
-    private $minphp = '7.4.8';
+    private $minphp = '7.4';
 
     /**
      * Current framework version.
@@ -646,7 +646,7 @@ class Application extends Handler
 
     protected function phpversion(string $version)
     {
-        if($this->minphp < $version)
+        if($this->minphp >= $version)
         {
             $this->response = 'Voyager require PHP version ' . $this->minphp . ' or higher.';
             $this->terminate = true;
