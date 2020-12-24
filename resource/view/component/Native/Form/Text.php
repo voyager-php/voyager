@@ -25,6 +25,7 @@ class Text extends Components
         'hovercolor'            => 'gray-600',
         'highlight'             => 'blue-500',
         'color'                 => 'black',
+        'autofocus'             => false,
         'rounded'               => true,
         'disabled'              => false,
         'onkeydown'             => null,
