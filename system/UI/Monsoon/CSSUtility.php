@@ -178,7 +178,7 @@ class CSSUtility
                 }
 
                 $str->append('<' . $break[0]);
-                $str->append('class="' . $css->implode(' ') . '"');
+                $str->append('class="' . Str::moveFromBothEnds($css->implode(' '), ' ') . '"');
                 $str->append(Str::break($break[1], '"')[1]);
             }
             else
