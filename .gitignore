@@ -1,4 +1,5 @@
 storage/*
 vendor/*
-public/css/static/*
-public/js/static/*
+public/css/*
+public/js/*
+.env
