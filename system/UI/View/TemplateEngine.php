@@ -201,6 +201,12 @@ class TemplateEngine
 
     private function makeExternalResource(string $html)
     {
+        if(Str::has($html, '<head>'))
+        {
+            $break = Str::break($html, '<head>');
+            $html = $break[0] . '<head><noscript><meta http-equiv="refresh" content="0;url=/?_nojs=true"></noscript>' . $break[1];
+        }
+
         if(Str::has($html, '</head>'))
         {
             $break = Str::break($html, '</head>');

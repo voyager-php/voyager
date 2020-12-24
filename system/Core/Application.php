@@ -289,12 +289,6 @@ class Application extends Handler
             $this->route = cache($uri);
             $this->loadConstants();
 
-            if($this->request()->get('_nojs', false))
-            {
-                $this->response = view('content.debug.nojs');
-                $this->terminate = true;
-            }
-
             if(is_null($this->route))
             {
                 $route = Router::init($uri)->getRoute();
@@ -313,6 +307,12 @@ class Application extends Handler
                         }
                     });
                 }
+            }
+
+            if($this->request()->get('_nojs', false) && !$this->request()->ajax() && !$this->route['ajax'])
+            {
+                $this->response = view('content.debug.nojs');
+                $this->terminate = true;
             }
 
             $this->overrideFromRouteData($this->route);
