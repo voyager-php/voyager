@@ -3,7 +3,6 @@
 namespace Voyager\Core;
 
 use Closure;
-use Voyager\Core\Error\Handler;
 use Voyager\Facade\Str;
 use Voyager\Http\Middleware\Kernel;
 use Voyager\Http\Request;

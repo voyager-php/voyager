@@ -1,6 +1,6 @@
 <?php
 
-namespace Voyager\Core\Error;
+namespace Voyager\Core;
 
 use Voyager\Facade\Str;
 
