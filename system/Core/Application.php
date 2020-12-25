@@ -310,7 +310,7 @@ class Application extends Handler
 
             if($this->request()->get('_nojs', false) && !$this->request()->ajax() && !$this->route['ajax'])
             {
-                $this->response = view('content.debug.nojs');
+                $this->response = view('content.native.nojs');
                 $this->terminate = true;
             }
 

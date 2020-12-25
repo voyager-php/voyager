@@ -78,7 +78,7 @@ abstract class Handler
         $this->code = 500;
         $this->setHeaders();
         
-        echo view('content.debug.index', [
+        echo view('content.native.index', [
             'menu'                       => [
                 [
                     'key'                => 'docs',

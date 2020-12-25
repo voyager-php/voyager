@@ -355,7 +355,7 @@
             $content = ob_get_contents();
             ob_end_clean();
 
-            app()->response = view('content.debug.dd', [
+            app()->response = view('content.native.dd', [
                 'content' => str_replace(['&lt;?php&nbsp;', '?&gt;'], '', highlight_string('<?php ' . $content . ' ?>', true)),
                 'file'    => '..\\' . Str::moveFromStart($trace[0]['file'], Str::move(app()->request()->server('DOCUMENT_ROOT'), 0, 6)),
                 'line'    => $trace[0]['line'],
