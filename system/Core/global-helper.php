@@ -1,5 +1,6 @@
 <?php
 
+    use App\Controller\Internal\ErrorStatusController;
     use Voyager\Core\Application;
     use Voyager\Core\Cache;
     use Voyager\Facade\Str;
@@ -468,7 +469,7 @@
 
             if(is_null($data))
             {
-                $instance = new App\Controller\ErrorStatusController(['method' => 'index']);
+                $instance = new ErrorStatusController(['method' => 'index']);
                 app()->response = $instance->getResponse();
             }
             else

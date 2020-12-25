@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Internal;
 
 use Voyager\App\Controller;
 use Voyager\App\Request;
