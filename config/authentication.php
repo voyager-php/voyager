@@ -10,14 +10,6 @@ return [
 
     'redirection' => url('/login'),
 
-    /** 
-     * Redirect to this route if authenticated.
-     * 
-     * @var string
-     */
-
-    'landing' => url('/dashboard'),
-
     /**
      * Type of users.
      * 
