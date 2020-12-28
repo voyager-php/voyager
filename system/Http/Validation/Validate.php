@@ -10,7 +10,7 @@ class Validate extends ValidateBase
     /**
      * Store validation configuration data.
      * 
-     * @var \Voyager\Util\Data\Collection
+     * @var array
      */
 
     private static $validations;
@@ -32,6 +32,14 @@ class Validate extends ValidateBase
     private $override;
 
     /**
+     * Store validation type.
+     * 
+     * @var string
+     */
+
+    private $type;
+
+    /**
      * Create new validate instance.
      * 
      * @param   string $type
@@ -41,11 +49,12 @@ class Validate extends ValidateBase
 
     public function __construct(string $type, ?string $value, bool $optional, array $override = null)
     {
+        $this->type = $type;
         $this->override = $override;
         
         if(is_null(static::$validations))
         {
-            static::$validations = new Collection(Config::get()[$type]);
+            static::$validations = Config::get();
         }
 
         $this->test($value, $optional);
@@ -63,7 +72,7 @@ class Validate extends ValidateBase
     {
         $code = -1;
         $value = Str::make($value ?? '');
-        $data = static::$validations;
+        $data = new Collection(static::$validations[$this->type]);
         $length = $value->length();
 
         if(!is_null($this->override))

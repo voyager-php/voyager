@@ -61,10 +61,8 @@ abstract class Validation
     {
         $methods = get_class_methods($this);
         
-        for($i = 0; $i <= (sizeof($methods) - 1); $i++)
+        foreach($methods as $method)
         {
-            $method = $methods[$i];
-
             if(!in_array($method, $this->exclude))
             {
                 if(method_exists($this, $method))
