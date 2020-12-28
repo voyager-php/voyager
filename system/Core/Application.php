@@ -628,7 +628,7 @@ class Application extends Handler
 
     protected function response($response = null)
     {
-        if(!is_null($response))
+        if(!is_null($response) && !$this->promises->hasKey('redirection'))
         {
             $response = new Response($response);
             $this->contentType = $response->contentType();
