@@ -107,7 +107,19 @@ class Request
 
     public function method()
     {
-        return Str::toUpper($this->server('REQUEST_METHOD'));
+        $method = strtoupper($this->server('REQUEST_METHOD'));
+    
+        if($method !== 'GET')
+        {
+            $spoof = $this->get('_verb', $this->post('_post', null));
+        
+            if(!is_null($spoof))
+            {
+                $method = $spoof;
+            }
+        }
+
+        return $method;
     }
 
     /**
@@ -162,7 +174,7 @@ class Request
 
         foreach($_POST as $keyword => $value)
         {
-            $param->set($keyword, $value);
+            $param->set($keyword, urldecode($value));
         }
 
         if(is_null($key))
