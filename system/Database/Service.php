@@ -407,7 +407,7 @@ abstract class Service
 
     public function isSoftDeleted(int $id)
     {
-        return (bool)$this->select('id')->equal('id', $id)->isDeleted()->get()->empty();
+        return (bool)!$this->select('id')->equal('id', $id)->isDeleted()->get()->empty();
     }
 
     /**
