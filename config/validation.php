@@ -40,7 +40,7 @@ namespace Voyager\Http\Validation {
     Param::id('email')
         ->maxLength(320)
         // ->endWith(['@gmail.com', '@yahoo.com'])
-        ->regexPattern('/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/');
+        ->regexPattern('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/');
 
     /**
      * USERNAME
