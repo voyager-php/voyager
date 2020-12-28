@@ -4,7 +4,6 @@ namespace Voyager\Database\Operations;
 
 use Voyager\Database\DB;
 use Voyager\Database\DBOperations;
-use Voyager\Facade\Str;
 use Voyager\Util\Arr;
 
 class InsertOperation extends DBOperations
@@ -57,18 +56,17 @@ class InsertOperation extends DBOperations
         $sql = $this->sql;
 
         $this->toInsert->each(function($key, $data) use ($sql) {
-            $data = new Arr($data);
             
             $sql->append('INSERT INTO ')
                 ->append($this->tablename)
-                ->append(' (`' . implode('`, `', $data->keys()))
+                ->append(' (`' . implode('`, `', array_keys($data)))
                 ->append('`) VALUES(');
 
-            foreach($data->get() as $key => $value)
+            foreach($data as $value)
             {
-                $sql->append("'")
+                $sql->append(" ")
                     ->append(DB::escape($value))
-                    ->append("',");
+                    ->append(",");
             }
 
             $sql->move(0, 1)->append(')');
