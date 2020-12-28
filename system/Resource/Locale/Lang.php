@@ -185,7 +185,7 @@ class Lang extends Translations
 
             if(array_key_exists($id, $locales))
             {
-                $locale = $locales[$id]->data();
+                $locale = $locales[$id];
                 
                 if(array_key_exists($lang, $locale))
                 {
