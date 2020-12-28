@@ -181,6 +181,11 @@ class DBResult extends DBResponse
             }
         }
 
+        if($total === 0)
+        {
+            app()->code = 404;
+        }
+
         return $request->apiResponse($result->get(), [
             'total'             => $total,
             'paginate'          => true,
