@@ -45,21 +45,14 @@ abstract class Transformer
 
     private function format(array $data)
     {
-        $res = new Arr();
+        $res = [];
 
         foreach($data as $key => $value)
         {
-            if(is_numeric($value) || is_int($value))
-            {
-                $res->set($key, (int)$value);
-            }
-            else
-            {
-                $res->set($key, $value);
-            }
+            $res[$key] = $value;
         }
 
-        return $res->get();
+        return $res;
     }
 
     /**
