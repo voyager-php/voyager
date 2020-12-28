@@ -122,15 +122,22 @@ class CSSUtility
                         }
                         else
                         {
-                            $css->push($util);
-                            $cache = cache('util_' . $util);
+                            $key = $util;
+
+                            if(!is_null($pseudo))
+                            {
+                                $key = $pseudo . '-' . $util;
+                            }
+
+                            $css->push($key);
+                            $cache = cache('util_' . $key);
 
                             if(is_null($cache))
                             {
-                                $cache = cache('util_' . $util, static::generate($util, $util, $pseudo, $negative));
+                                $cache = cache('util_' . $key, static::generate($key, $util, $pseudo, $negative));
                             }
 
-                            $classes->set($util, $cache);
+                            $classes->set($key, $cache);
                         }
                     }
                     else
@@ -159,12 +166,19 @@ class CSSUtility
                             }
                             else
                             {
-                                $css->push($util);
-                                $cache = cache('util_' . $util);
+                                $key = $util;
+
+                                if(!is_null($pseudo))
+                                {
+                                    $key = $pseudo . '-' . $util;
+                                }
+
+                                $css->push($key);
+                                $cache = cache('util_' . $key);
                                 
                                 if(is_null($cache))
                                 {
-                                    $cache = cache('util_' . $util, static::generate($util, $class, $pseudo, $negative, $value));
+                                    $cache = cache('util_' . $key, static::generate($key, $class, $pseudo, $negative, $value));
                                 }
 
                                 $classes->set($util, $cache);

@@ -2,7 +2,19 @@
 
 return [
 
+    /**
+     * Enable or disable monsoon css utility.
+     * 
+     * @var bool
+     */
+
     'enable' => true,
+
+    /**
+     * Available screen break points.
+     * 
+     * @var array
+     */
 
     'screens' => [
         'xs' => 480,
@@ -11,6 +23,12 @@ return [
         'lg' => 1279,
         'xl' => 1400,
     ],
+
+    /**
+     * Monsoon default utility values.
+     * 
+     * @var array
+     */
 
     'default' => [
         
