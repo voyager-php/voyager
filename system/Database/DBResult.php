@@ -124,7 +124,7 @@ class DBResult extends DBResponse
      * Transform database result.
      * 
      * @param   string $class
-     * @return  array
+     * @return  $this
      */
 
     public function transform(string $class)
