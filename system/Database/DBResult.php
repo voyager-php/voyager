@@ -165,19 +165,19 @@ class DBResult extends DBResponse
     public function paginate(Request $request)
     {
         $data = $this->fetch();
-        $total = $this->numRows();
-        $page = (int)$request->get('page', 1);
-        $per_page = (int)$request->get('per_page', 10);
-        $total_page = (int)ceil($total / ($page * $per_page));
+        $total = (int) $this->numRows();
+        $page = (int) $request->get('page', 1);
+        $per_page = (int) $request->get('per_page', 10);
+        $total_page = (int) ceil($total / ($page * $per_page));
         $start = ($page * $per_page) - $per_page;
         $end = $start + $per_page;
-        $result = new Arr();
+        $result = [];
 
         for($i = $start + 1; $i <= $end; $i++)
         {
             if($i <= $total)
             {
-                $result->push($data->get($i - 1)->toArray());
+                $result[] = $data->get($i - 1)->toArray();
             }
         }
 
@@ -186,13 +186,13 @@ class DBResult extends DBResponse
             app()->code = 404;
         }
 
-        return $request->apiResponse($result->get(), [
+        return $request->apiResponse($result, [
             'total'             => $total,
             'paginate'          => true,
             'page'              => $page,
             'per_page'          => $per_page,
             'total_page'        => $total_page,
-            'rows'              => $result->length(),
+            'rows'              => sizeof($result),
         ]);
     }
 
