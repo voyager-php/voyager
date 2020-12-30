@@ -122,14 +122,14 @@ class Router
         $uri1 = $this->uriToArray($this->uri);
         $routes = static::$cache;
         $groups = array_keys($routes);
-        $resource = [];
-
+        
         for($i = 0; $i <= (sizeof($groups) - 1); $i++)
         {
             $group = $routes[$groups[$i]];
             
             for($j = 0; $j <= (sizeof($group) - 1); $j++)
             {
+                $resource = [];
                 $route = $group[$j];
                 $uri2 = $this->uriToArray($route['uri']);
                 
