@@ -13,6 +13,22 @@ abstract class Service
     private $model;
 
     /**
+     * Store select operation object.
+     * 
+     * @var \Voyager\Database\Operations\SelectOperation
+     */
+
+    protected $select;
+
+    /**
+     * Store update operation object.
+     * 
+     * @var \Voyager\Database\Operations\UpdateOperation
+     */
+
+    protected $update;
+
+    /**
      * Create new service instance.
      * 
      * @param   \Voyager\Database\Model
@@ -21,7 +37,9 @@ abstract class Service
 
     public function __construct(Model $model)
     {
-        $this->model = $model->model();
+        $this->model            = $model->model();
+        $this->select           = $this->select();
+        $this->update           = $this->update();
     }
 
     /**
@@ -192,7 +210,7 @@ abstract class Service
 
     public function exist(int $id)
     {
-        return !$this->select('id')->equal('id', $id)->get()->empty();
+        return (bool) !$this->select('id')->equal('id', $id)->get()->empty();
     }
 
     /**
@@ -297,7 +315,7 @@ abstract class Service
 
     public function has(string $key, $value)
     {
-        return (int)$this->count('total')->equal($key, $value)->get()->total !== 0;
+        return (int) $this->count('total')->equal($key, $value)->get()->total !== 0;
     }
 
     /**
@@ -346,7 +364,7 @@ abstract class Service
 
     public function sum(string $key)
     {
-        return (int)$this->select('SUM(' . $key . ') AS total_sum')->get()->total_sum;
+        return (int) $this->select('SUM(' . $key . ') AS total_sum')->get()->total_sum;
     }
 
     /**
@@ -358,7 +376,7 @@ abstract class Service
 
     public function ave(string $key)
     {
-        return (int)$this->select('AVE(' . $key . ') AS total_ave')->get()->total_ave;
+        return (int) $this->select('AVE(' . $key . ') AS total_ave')->get()->total_ave;
     }
 
     /**
@@ -370,7 +388,7 @@ abstract class Service
 
     public function min(string $key)
     {
-        return (int)$this->select('MIN(' . $key . ') AS min_value')->get()->min_value;
+        return (int) $this->select('MIN(' . $key . ') AS min_value')->get()->min_value;
     }
 
     /**
@@ -382,7 +400,7 @@ abstract class Service
 
     public function max(string $key)
     {
-        return (int)$this->select('MAX(' . $key . ') AS max_value')->get()->max_value;
+        return (int) $this->select('MAX(' . $key . ') AS max_value')->get()->max_value;
     }
 
     /**
@@ -407,7 +425,7 @@ abstract class Service
 
     public function isSoftDeleted(int $id)
     {
-        return (bool)!$this->select('id')->equal('id', $id)->isDeleted()->get()->empty();
+        return (bool) !$this->select('id')->equal('id', $id)->isDeleted()->get()->empty();
     }
 
     /**
