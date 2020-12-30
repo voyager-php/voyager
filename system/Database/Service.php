@@ -191,14 +191,23 @@ abstract class Service
 
     public function pluck(string $key, int $limit = null)
     {
+        $data = [];
+
         if(is_null($limit))
         {
-            return $this->select($key)->get()->fetch();
+            $plucked = $this->select($key)->get()->fetch();
         }
         else
         {
-            return $this->select($key)->limit(0, $limit)->get()->fetch();
+            $plucked = $this->select($key)->limit(0, $limit)->get()->fetch();
         }
+
+        foreach($plucked->toArray() as $value)
+        {
+            $data[] = $value[$key];
+        }
+
+        return $data;
     }
 
     /**
