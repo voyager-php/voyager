@@ -134,14 +134,14 @@ class Bundle
 
     public function toArray()
     {
-        $array = new Arr();
+        $array = [];
 
         foreach($this->collections->get() as $collection)
         {
-            $array->push($collection->toArray());
+            $array[] = $collection->toArray();
         }
 
-        return $array->get();
+        return $array;
     }
 
     /**
