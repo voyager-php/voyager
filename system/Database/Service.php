@@ -257,7 +257,7 @@ abstract class Service
      * @return  mixed
      */
 
-    public function editById(int $id, $data = [])
+    public function editById(int $id, $data)
     {
         return $this->update($data)->equal('id', $id)->exec();
     }
