@@ -134,6 +134,30 @@ class SelectOperation extends DBWhereBuilder
     }
 
     /**
+     * Sort results in ascending order.
+     * 
+     * @param   mixed $fields
+     * @return  $this
+     */
+
+    public function asc($fields = 'created')
+    {
+        return $this->orderBy('asc', $fields);
+    }
+
+    /**
+     * Sort results in descending order.
+     * 
+     * @param   mixed $fields
+     * @return  $this
+     */
+
+    public function desc($fields = 'created')
+    {
+        return $this->orderBy('desc', $fields);
+    }
+
+    /**
      * Set result order to random.
      * 
      * @return  $this
