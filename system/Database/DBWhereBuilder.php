@@ -467,9 +467,9 @@ abstract class DBWhereBuilder extends DBOperations
             foreach($value as $item)
             {
                 $sql->append('`' . $key . '`')
-                    ->append(' LIKE \'')
-                    ->append(DB::escape($item))
-                    ->append('%\' OR ');
+                    ->append(' LIKE ')
+                    ->append(DB::escape($item . '%'))
+                    ->append(' OR ');
             }
 
             if($sql->endWith(' OR '))
@@ -483,9 +483,8 @@ abstract class DBWhereBuilder extends DBOperations
         {
             $sql = new Builder($glue);
             $sql->append(' `' . $key . '` ')
-                ->append('LIKE \'')
-                ->append(DB::escape($value))
-                ->append('%\'');
+                ->append('LIKE ')
+                ->append(DB::escape($value . '%'));
         }
 
         return $this->raw($sql->get());
@@ -535,9 +534,9 @@ abstract class DBWhereBuilder extends DBOperations
             foreach($value as $item)
             {
                 $sql->append('`' . $key . '`')
-                    ->append('LIKE \'%')
-                    ->append(DB::escape($item))
-                    ->append('\' OR ');
+                    ->append('LIKE ')
+                    ->append(DB::escape('%' . $item))
+                    ->append(' OR ');
             }
 
             if($sql->endWith(' OR '))
@@ -552,10 +551,8 @@ abstract class DBWhereBuilder extends DBOperations
             $sql = new Builder($glue);
             $sql->append(' `')
                 ->append($key)
-                ->append('` LIKE')
-                ->append(' \'%')
-                ->append(DB::escape($value))
-                ->append('\'');
+                ->append('` LIKE ')
+                ->append(DB::escape('%' . $value));
         }
 
         return $this->raw($sql->get());
@@ -608,9 +605,8 @@ abstract class DBWhereBuilder extends DBOperations
             {
                 $sql->append($key)
                     ->append(' LIKE ')
-                    ->append('\'%')
-                    ->append(DB::escape($item))
-                    ->append('%\' OR ');
+                    ->append(DB::escape('%' . $item . '%'))
+                    ->append(' OR ');
             }
 
             if($sql->endWith(' OR '))
@@ -624,9 +620,7 @@ abstract class DBWhereBuilder extends DBOperations
         {
             $sql->append($key)
                 ->append(' LIKE ')
-                ->append('\'%')
-                ->append(DB::escape($value))
-                ->append('%\'');
+                ->append(DB::escape('%' . $value . '%'));
         }
 
         return $this->raw($sql->get());
@@ -679,9 +673,8 @@ abstract class DBWhereBuilder extends DBOperations
             {
                 $sql->append($key)
                     ->append(' NOT LIKE ')
-                    ->append('\'%')
-                    ->append(DB::escape($item))
-                    ->append('%\' OR ');
+                    ->append(DB::escape('%' . $item . '%'))
+                    ->append(' OR ');
             }
 
             if($sql->endWith(' OR '))
@@ -695,9 +688,7 @@ abstract class DBWhereBuilder extends DBOperations
         {
             $sql->append($key)
                 ->append(' NOT LIKE ')
-                ->append('\'%')
-                ->append(DB::escape($value))
-                ->append('%\'');
+                ->append(DB::escape('%' . $value . '%'));
         }
 
         return $this->raw($sql->get());

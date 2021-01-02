@@ -24,7 +24,7 @@ class DeleteOperation extends DBWhereBuilder
             $sql->append(' WHERE ')->append($where);
         }
 
-        return $sql->get();
+        return $sql->moveFromEnd(' ')->get();
     }
 
     /**

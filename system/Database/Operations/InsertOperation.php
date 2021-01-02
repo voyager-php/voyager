@@ -71,7 +71,7 @@ class InsertOperation extends DBOperations
 
             $sql->move(0, 1)->append(')');
 
-            DB::query($sql->get());
+            DB::query($sql->moveFromEnd(' ')->get());
         });
     }
 

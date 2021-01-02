@@ -254,7 +254,7 @@ class SelectOperation extends DBWhereBuilder
                 ->append($this->prop->get('limit_length'));
         }
 
-        return $sql->get();
+        return $sql->moveFromEnd(' ')->get();
     }
 
     /**
