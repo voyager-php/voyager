@@ -145,13 +145,16 @@ class Router
                         }
                         else
                         {
-                            $segment = $uri2[$k];
-                            $name = Str::move($segment, 1, 1);
-                            
-                            if(Str::startWith($segment, '{') && Str::endWith($segment, '}'))
+                            if($uri1[$k] !== '')
                             {
-                                $resource[$name] = $uri1[$k];
-                                $n++;
+                                $segment = $uri2[$k];
+                                $name = Str::move($segment, 1, 1);
+                            
+                                if(Str::startWith($segment, '{') && Str::endWith($segment, '}'))
+                                {
+                                    $resource[$name] = $uri1[$k];
+                                    $n++;
+                                }
                             }
                         }
                     }
