@@ -131,7 +131,7 @@ abstract class Service
      * @return  \Voyager\Database\Operations\InsertOperation
      */
 
-    public function insert($arg = null)
+    public function insert($arg)
     {
         return $this->model->insert($arg);
     }
