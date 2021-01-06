@@ -75,6 +75,7 @@ class Authentication
             'user_type'     => null,
             'time_in'       => null,
         ]);
+        $this->start = $this->authenticated();
     }
 
     /**
