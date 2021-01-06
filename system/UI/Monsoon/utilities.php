@@ -650,7 +650,7 @@ namespace Voyager\UI\Monsoon {
      * Table Layout Utilities.
      */
 
-    Util::set('table-layout')->prop('table-layout', 'auto');
+    Util::set('table-auto')->prop('table-layout', 'auto');
     Util::set('table-fixed')->prop('table-layout', 'fixed');
 
     /**
