@@ -170,4 +170,35 @@ class Bundle
         return $this;
     }
 
+    /**
+     * Add new column to each row.
+     * 
+     * @param   string $key
+     * @param   mixed $value
+     * @return  $this
+     */
+
+    public function addColumn(string $key, $value)
+    {
+        $data = new Arr();
+
+        foreach($this->toArray() as $item)
+        {
+            if($value instanceof Closure)
+            {
+                $item[$key] = $value($item);
+            }
+            else
+            {
+                $item[$key] = $value;
+            }
+
+            $data->push(new Collection($item));
+        }
+
+        $this->collections = $data;
+
+        return $this;
+    }
+
 }
