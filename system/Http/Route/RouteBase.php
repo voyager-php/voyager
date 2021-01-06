@@ -555,7 +555,7 @@ abstract class RouteBase
 
     public function data()
     {
-        $this->set('middlewares', $this->middlewares->get());
+        $this->set('middlewares', $this->middlewares->unique()->get());
         return $this->data->get();
     }
 
