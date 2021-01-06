@@ -442,12 +442,12 @@ class Chronos
     {
         $date = new Str();
         $date->append($year . '-')
-             ->append($month . '-')
-             ->append($day)
+             ->append(($month < 10 ? '0' . $month : $month) . '-')
+             ->append(($day < 10 ? '0' . $day : $day))
              ->append(' ')
-             ->append($hour . ':')
-             ->append($minute . ':')
-             ->append($second);
+             ->append(($hour < 10 ? '0' . $hour : $hour) . ':')
+             ->append(($minute < 10 ? '0' . $minute : $minute) . ':')
+             ->append(($second < 10 ? '0' . $second : $second));
 
         return static::parse($date->get(), $timezone);
     }
