@@ -305,7 +305,7 @@ class TemplateEngine
 
                 $scripts   = [$cache];
                 $scripts[] = 'voyager.setProperty(\'version\',\'' . app()->version() . '\');'; 
-                $scripts[] = 'voyager.setProperty(\'locale\',\'' . env('APP_LOCALE') . '\');';
+                $scripts[] = 'voyager.setProperty(\'locale\',\'' . app()->locale . '\');';
                 $scripts[] = 'voyager.setProperty(\'backup_locale\', \'' . env('APP_BACKUP_LOCALE') . '\');';
                 $scripts[] = 'voyager.setProperty(\'app_url\',\'' . env('APP_URL') . '\');';
                 $scripts[] = 'voyager.setProperty(\'app_name\',\'' . env('INFO_NAME') . '\');';
