@@ -59,15 +59,17 @@ class SelectOperation extends DBWhereBuilder
      * 
      * @param   string $tablename
      * @param   array $columns
+     * @param   string $operator
      * @return  $this
      */
 
-    public function innerJoin(string $tablename, array $columns)
+    public function innerJoin(string $tablename, array $columns, string $operator = '=')
     {
         $this->join->push([
             'type'              => 'inner',
             'tablename'         => $tablename,
             'columns'           => $columns,
+            'operator'          => $operator,
         ]);
 
         return $this;
@@ -78,15 +80,17 @@ class SelectOperation extends DBWhereBuilder
      * 
      * @param   string $tablename
      * @param   array $columns
+     * @param   string $operator
      * @return  $this
      */
 
-    public function leftJoin(string $tablename, array $columns)
+    public function leftJoin(string $tablename, array $columns, string $operator = '=')
     {
         $this->join->push([
             'type'              => 'left',
             'tablename'         => $tablename,
             'columns'           => $columns,
+            'operator'          => $operator,
         ]);
 
         return $this;
@@ -97,15 +101,17 @@ class SelectOperation extends DBWhereBuilder
      * 
      * @param   string $tablename
      * @param   array $columns
+     * @param   string $operator
      * @return  $this
      */
 
-    public function rightJoin(string $tablename, array $columns)
+    public function rightJoin(string $tablename, array $columns, string $operator = '=')
     {
         $this->join->push([
             'type'              => 'right',
             'tablename'         => $tablename,
             'columns'           => $columns,
+            'operator'          => $operator,
         ]);
 
         return $this;
@@ -190,7 +196,7 @@ class SelectOperation extends DBWhereBuilder
 
     public function sql()
     {
-        $sql = $this->sql->append('SELECT ');
+        $sql = $this->sql->set('')->append('SELECT ');
         
         if($this->prop->get('distinct'))
         {
@@ -213,7 +219,8 @@ class SelectOperation extends DBWhereBuilder
                 foreach($join['columns'] as $key1 => $key2)
                 {
                     $sql->append(' ' . $this->tablename . '.' . $key1)
-                        ->append(' = ' . $join['tablename'] . '.' . $key2)
+                        ->append(' ' . $join['operator'] . ' ')
+                        ->append($join['tablename'] . '.' . $key2)
                         ->append(' AND ');
                 }
 

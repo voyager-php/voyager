@@ -5,18 +5,12 @@ namespace Voyager\Http\File;
 use Voyager\App\Request;
 use Voyager\Facade\Str;
 use Voyager\Util\Arr;
+use Voyager\Util\Chronos;
+use Voyager\Util\Data\Collection;
 use Voyager\Util\File\Directory;
 
 class UploadManager
 {
-    /**
-     * Request file index key.
-     * 
-     * @var string
-     */
-
-    private $key;
-
     /**
      * Maximum size of file to upload.
      * 
@@ -32,14 +26,6 @@ class UploadManager
      */
 
     private $directory;
-
-    /**
-     * Store request instance.
-     * 
-     * @var \Voyager\App\Request
-     */
-
-    private $request;
 
     /**
      * Store accepted file extensions.
@@ -155,18 +141,20 @@ class UploadManager
 
     public function move(string $rename = null)
     {
+        $now = Chronos::now()->format('Y-m-d');
+
         if(is_null($rename))
         {
-            $hash = Str::hash(Str::random(10));
+            $hash = Str::hash($now . '-' . Str::random(10));
         }
         else
         {
-            $hash = Str::hash($rename);
+            $hash = Str::hash($now . '-' . $rename);
         }
 
         if(!is_null($this->data) && $this->data->error === UPLOAD_ERR_OK && $this->data->size <= $this->max)
         {
-            $ext = new Arr(explode('.', $this->data->name));
+            $ext = new Arr(explode('.', strtolower($this->data->name)));
             $ext = $ext->last();
 
             if($this->accept->has($ext) || $this->accept->empty())
@@ -178,7 +166,10 @@ class UploadManager
                         abort(400);
                     }
 
-                    return $hash;
+                    return new Collection([
+                        'hash'                  => $hash,
+                        'extension'             => $ext,
+                    ]);
                 }
             }
         }

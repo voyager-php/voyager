@@ -83,24 +83,28 @@
     defineProperty('authUserId', app.authUserId);
     defineProperty('token', app.token);
 
-    voyager.get = function(key) 
-    {
-        if(objectHasKey(app.get(), key)) 
+    voyager.param = {
+
+        get: function(key, fallback = null) 
         {
-            return app.get()[key];
-        }
+            if(objectHasKey(app.get(), key)) 
+            {
+                return app.get()[key];
+            }
 
-        return null;
-    };
+            return fallback;
+        },
 
-    voyager.post = function(key) 
-    {
-        if(objectHasKey(app.post(), key))
+        post: function(key, fallback = null) 
         {
-            return app.post()[key];
-        }
+            if(objectHasKey(app.post(), key))
+            {
+                return app.post()[key];
+            }
 
-        return null;
+            return fallback;
+        }
+        
     };
 
     voyager.resource = function(key) 

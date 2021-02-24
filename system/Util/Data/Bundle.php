@@ -201,4 +201,23 @@ class Bundle
         return $this;
     }
 
+    /**
+     * Return values of a column.
+     * 
+     * @param   string $key
+     * @return  array
+     */
+
+    public function column(string $key)
+    {
+        $data = [];
+
+        foreach($this->toArray() as $item)
+        {
+            $data[] = $item[$key];
+        }
+
+        return $data;
+    }
+
 }

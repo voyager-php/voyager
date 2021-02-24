@@ -3,7 +3,6 @@
 namespace Voyager\Database;
 
 use Voyager\App\Request;
-use Voyager\Util\Arr;
 use Voyager\Util\Data\Bundle;
 
 class DBResult extends DBResponse
@@ -135,6 +134,35 @@ class DBResult extends DBResponse
     }
 
     /**
+     * Add new column to result.
+     * 
+     * @param   string $key
+     * @param   mixed $value
+     * @return  $this
+     */
+
+    public function addColumn(string $key, $value)
+    {
+        $this->fetch();
+        $this->bundle->addColumn($key, $value);
+
+        return $this;
+    }
+
+    /**
+     * Return list of value of a column.
+     * 
+     * @param   string $key
+     * @return  array
+     */
+
+    public function column(string $key)
+    {
+        $this->fetch();
+        return $this->bundle->column($key);
+    }
+
+    /**
      * If result is just one row, automatically get
      * values by calling it as property.
      * 
@@ -164,14 +192,34 @@ class DBResult extends DBResponse
 
     public function paginate(Request $request)
     {
+        $maximum = 5;
         $data = $this->fetch();
         $total = (int) $this->numRows();
         $page = (int) $request->get('page', 1);
         $per_page = (int) $request->get('per_page', 10);
-        $total_page = (int) ceil($total / ($page * $per_page));
+        $total_page = (int) ceil($total / $per_page);
         $start = ($page * $per_page) - $per_page;
         $end = $start + $per_page;
         $result = [];
+        $min = $page;
+        $max = ($min - 1) + $maximum;
+
+        if($max > $total_page)
+        {
+            $max = $total_page;
+        }
+
+        $diff = ($max - $min) + 1;
+
+        if($diff < $maximum)
+        {
+            $min -= ($maximum - $diff);
+        }
+
+        if($min <= 0)
+        {
+            $min = 1;
+        }
 
         for($i = $start + 1; $i <= $end; $i++)
         {
@@ -193,6 +241,10 @@ class DBResult extends DBResponse
             'per_page'          => $per_page,
             'total_page'        => $total_page,
             'rows'              => sizeof($result),
+            'pages'             => [
+                'min'           => $min,
+                'max'           => $max,
+            ],
         ]);
     }
 

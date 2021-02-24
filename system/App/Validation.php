@@ -67,7 +67,8 @@ abstract class Validation
             {
                 if(method_exists($this, $method))
                 {
-                    $parameter = new Parameter($this->getParameterValue($method), $method);
+                    $value = $this->getParameterValue($method);
+                    $parameter = new Parameter($value, $method);
                     $this->{$method}($parameter);
                     
                     $data = $parameter->data();
@@ -83,7 +84,16 @@ abstract class Validation
                         }
                         else
                         {
-                            $this->errors->set($method, 'Please enter a valid ' . $method . '.');
+                            $name = !is_null($data->name) ? $data->name : $method;
+
+                            if(empty($value))
+                            {
+                                $this->errors->set($method, 'Do not leave ' . strtolower($name) . ' empty.');
+                            }
+                            else
+                            {
+                                $this->errors->set($method, 'Please enter a valid ' . strtolower($name) . '.');
+                            }
                         }
                     }
                     else

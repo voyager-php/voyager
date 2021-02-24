@@ -2,6 +2,7 @@
 
 namespace Voyager\Util;
 
+use DateInterval;
 use DateTime;
 use DateTimeZone;
 use Voyager\Util\Str;
@@ -406,6 +407,114 @@ class Chronos
     }
 
     /**
+     * Subtract number of years.
+     * 
+     * @param   int $year
+     * @return  $this
+     */
+
+    public function subYear(int $year)
+    {
+        $this->datetime->sub(new DateInterval('P' . $year . 'Y'));
+
+        return $this;
+    }
+
+    /**
+     * Add number of years.
+     * 
+     * @param   int $year
+     * @return  $this
+     */
+
+    public function addYear(int $year)
+    {
+        $this->datetime->add(new DateInterval('P' . $year . 'Y'));
+
+        return $this;
+    }
+
+    /**
+     * Subtract number of months.
+     * 
+     * @param   int $month
+     * @return  $this
+     */
+
+    public function subMonth(int $month)
+    {
+        $this->datetime->sub(new DateInterval('P' . $month . 'M'));
+
+        return $this;
+    }
+
+    /**
+     * Add number of months.
+     * 
+     * @param   int $month
+     * @return  $this
+     */
+
+    public function addMonth(int $month)
+    {
+        $this->datetime->add(new DateInterval('P' . $month . 'M'));
+
+        return $this;
+    }
+
+    /**
+     * Subtract number of days.
+     * 
+     * @param   int $day
+     * @return  $this
+     */
+
+    public function subDay(int $day)
+    {
+        $this->datetime->sub(new DateInterval('P' . $day . 'D'));
+
+        return $this;
+    }
+
+    /**
+     * Add number of days.
+     * 
+     * @param   int $day
+     * @return  $this
+     */
+
+    public function addDay(int $day)
+    {
+        $this->datetime->add(new DateInterval('P' . $day . 'D'));
+
+        return $this;
+    }
+
+    /**
+     * Subtract number of weeks.
+     * 
+     * @param   int $week
+     * @return  $this
+     */
+
+    public function subWeek(int $week)
+    {
+        return $this->subDay($week * 7);
+    }
+
+    /**
+     * Add number of weeks.
+     * 
+     * @param   int $week
+     * @return  $this
+     */
+
+    public function addWeek(int $week)
+    {
+        return $this->addDay($week * 7);
+    }
+
+    /**
      * Parse date and time from string.
      * 
      * @param   string $time
@@ -477,6 +586,18 @@ class Chronos
     public static function now(string $timezone = null)
     {
         return static::parse('now', $timezone);
+    }
+
+    /**
+     * Return date and time instance last week.
+     * 
+     * @param   string $timezone
+     * @return  $this
+     */
+
+    public static function lastWeek(string $timezone = null)
+    {
+        return static::now($timezone)->subWeek(1);
     }
 
     /**

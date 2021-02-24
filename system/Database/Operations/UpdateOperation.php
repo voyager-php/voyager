@@ -40,6 +40,7 @@ class UpdateOperation extends DBWhereBuilder
      * 
      * @param   string $key
      * @param   mixed $value
+     * @return  $this
      */
 
     public function set(string $key, $value)
@@ -47,6 +48,18 @@ class UpdateOperation extends DBWhereBuilder
         $this->toUpdate->set($key, $value);
 
         return $this;
+    }
+
+    /**
+     * Set column value to null.
+     * 
+     * @param   string $key
+     * @return  $this
+     */
+
+    public function setToNull(string $key)
+    {
+        return $this->set($key, 'null');
     }
 
     /**

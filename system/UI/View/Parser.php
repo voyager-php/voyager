@@ -71,6 +71,12 @@ class Parser
         $this->callable = new Arr();
         
         $html = $this->replaceIncludes($html);
+
+        if(Str::has($html, '@include'))
+        {
+            $html = $this->replaceIncludes($html);
+        }
+        
         $html = $this->replaceFunctions($html);
         $html = $this->replaceDirectives($html);
         $html = $this->replaceEndScopes($html);
