@@ -161,7 +161,7 @@ class CSSUtility
                                 }
                                 else
                                 {
-                                    $mediaqueries->set($key, [static::generate($key, $class, null, $negative, $value)]);
+                                    $mediaqueries->set($pseudo, [static::generate($key, $class, null, $negative, $value)]);
                                 }
                             }
                             else

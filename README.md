@@ -1,6 +1,6 @@
 # Voyager Framework
 
-![](https://img.shields.io/badge/packagist-v1.0.11-informational?style=flat&logo=<LOGO_NAME>&logoColor=white&color=2bbc8a) ![](https://img.shields.io/badge/license-MIT-informational?style=flat&logo=<LOGO_NAME>&logoColor=white&color=2bbc8a)
+![](https://img.shields.io/badge/packagist-v1.0.12-informational?style=flat&logo=<LOGO_NAME>&logoColor=white&color=2bbc8a) ![](https://img.shields.io/badge/license-MIT-informational?style=flat&logo=<LOGO_NAME>&logoColor=white&color=2bbc8a)
 
 Voyager is a fast, lightweight and open-source web application framework that provides you foundation to kick-start your web development.
 

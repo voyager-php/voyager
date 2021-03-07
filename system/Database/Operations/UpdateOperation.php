@@ -90,9 +90,9 @@ class UpdateOperation extends DBWhereBuilder
             else
             {
                 $sql->append($key)
-                    ->append(' = \'')
+                    ->append(' = ')
                     ->append(DB::escape($value))
-                    ->append('\', ');
+                    ->append(', ');
             }
         }
 
